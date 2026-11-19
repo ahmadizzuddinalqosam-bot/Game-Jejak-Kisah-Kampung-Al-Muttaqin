@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0B6B3A" />
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <title>Jejak Kebaikan Kampung — Kisah Al-Muttaqin</title>
+  <style>
+    :root {
+      --cream: #F8F4E6;
+      --cream-card: #FFFDF7;
+      --emerald: #0B6B3A;
+      --emerald-deep: #074A28;
+      --emerald-soft: #E3F2EA;
+      --sky: #46A5D7;
+      --sky-soft: #E5F4FC;
+      --pink: #E79BB3;
+      --gold: #D4A017;
+      --gold-soft: #FFF4D2;
+      --alert: #C44536;
+      --alert-soft: #FDECE9;
+      --ink: #1C2B23;
+      --muted: #52665B;
+      --line: #E3DCC8;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
+    body {
+      margin: 0; padding: 0; font-family: "Poppins", system-ui, -apple-system, sans-serif;
+      background: radial-gradient(circle at 12% 8%, rgba(70, 165, 215, 0.14) 0%, transparent 38%),
+                  radial-gradient(circle at 88% 12%, rgba(231, 155, 179, 0.16) 0%, transparent 40%),
+                  linear-gradient(180deg, #EEF6F1 0%, var(--cream) 42%, #F3EEDB 100%);
+      color: var(--ink); min-height: 100vh; display: flex; justify-content: center;
+    }
+    .app-shell { width: 100%; max-width: 480px; min-height: 100vh; padding: 14px 14px 20px 14px; display: flex; flex-direction: column; gap: 12px; }
+    .brand-header { background: var(--cream); border: 2px solid var(--line); border-top: 5px solid var(--emerald); border-radius: 20px; padding: 12px 14px; box-shadow: 0 6px 18px rgba(11, 107, 58, 0.08); }
+    .rub-badge-wrap { display: flex; align-items: center; gap: 10px; }
+    .rub-emblem { width: 44px; height: 44px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: var(--emerald-soft); border: 1.5px solid var(--gold); border-radius: 14px; }
+    .parent-title { font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; color: var(--emerald-deep); line-height: 1.1; }
+    .subbrand-pill { display: inline-block; margin-top: 3px; background: linear-gradient(90deg, var(--emerald) 0%, var(--sky) 100%); color: #FFFFFF; font-size: 10px; font-weight: 700; letter-spacing: 0.4px; padding: 2px 9px; border-radius: 999px; }
+    .stats-row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; justify-content: flex-end; margin-top: 10px; padding-top: 9px; border-top: 1px dashed var(--line); }
+    .pill { background: #FFFFFF; border: 1.5px solid #D4CCB6; color: var(--ink); border-radius: 999px; padding: 5px 10px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }
+    .pill.gold { background: var(--gold-soft); color: #7A5404; border-color: var(--gold); cursor: default; }
+    .pill.sky { background: var(--sky-soft); color: #16597D; border-color: var(--sky); }
+    .hero-world { background: var(--cream-card); border: 2px solid var(--line); border-radius: 22px; overflow: hidden; box-shadow: 0 8px 22px rgba(11, 107, 58, 0.09); }
+    .world-banner { position: relative; background: linear-gradient(180deg, #D7EFFB 0%, #ECF7F1 65%, #F8F4E6 100%); border-bottom: 2px solid var(--line); }
+    .world-banner svg { display: block; width: 100%; height: 136px; }
+    .world-tag-bar { display: flex; justify-content: space-between; align-items: center; padding: 7px 14px; background: #F4EFE0; font-size: 10.5px; font-weight: 700; color: var(--emerald-deep); border-bottom: 1px solid var(--line); }
+    .game-area { padding: 14px; }
+    .level-bar { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .level-badge { font-family: "Baloo 2", cursive; background: var(--emerald-soft); color: var(--emerald-deep); border: 1.5px solid #A8D4BE; font-weight: 800; font-size: 13px; padding: 3px 12px; border-radius: 12px; }
+    .timer-badge { font-family: "Baloo 2", cursive; font-size: 13px; font-weight: 800; color: var(--emerald-deep); background: var(--sky-soft); border: 1.5px solid #9ECFE9; padding: 3px 11px; border-radius: 12px; }
+    .timer-badge.warn { background: var(--alert-soft); color: var(--alert); border-color: #E8A79E; }
+    .mission-copy { font-size: 12.5px; color: var(--muted); line-height: 1.45; margin: 0 0 10px 0; }
+    .hud-strip { display: flex; justify-content: space-between; align-items: center; background: var(--cream); border: 1.5px solid var(--line); border-radius: 14px; padding: 7px 12px; margin-bottom: 12px; font-size: 12px; font-weight: 700; }
+    .stage-box { background: radial-gradient(circle at 20% 20%, rgba(70, 165, 215, 0.14) 0%, transparent 45%), radial-gradient(circle at 85% 80%, rgba(231, 155, 179, 0.18) 0%, transparent 45%), #FFFFFF; border: 2.5px dashed #8EC0A8; border-radius: 20px; padding: 14px 12px; text-align: center; margin-bottom: 12px; min-height: 162px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+    .item-card { background: #FFFDF8; border: 3px solid var(--emerald); border-bottom-width: 5px; color: var(--emerald-deep); padding: 10px 18px 12px 18px; border-radius: 20px; box-shadow: 0 8px 18px rgba(11, 107, 58, 0.14); touch-action: none; cursor: grab; display: inline-flex; flex-direction: column; align-items: center; gap: 6px; min-width: 176px; transition: transform 0.14s ease; }
+    .item-card.bonus { border-color: var(--gold); background: linear-gradient(180deg, #FFFDF7 0%, #FFF1C6 100%); color: #6E4903; }
+    .item-art svg { width: 58px; height: 58px; display: block; }
+    .item-label { font-family: "Baloo 2", cursive; font-size: 16px; font-weight: 800; line-height: 1.15; }
+    .stage-hint { font-size: 11px; color: var(--muted); margin-top: 8px; font-weight: 600; }
+    .bins-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .bin-btn { background: linear-gradient(180deg, #FFFFFF 0%, #FBF8EE 100%); border: 2.5px solid #D5CCB4; border-bottom-width: 4px; border-radius: 18px; padding: 12px 8px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .bin-btn.drag-over { border-color: var(--emerald); background: var(--emerald-soft); transform: scale(1.02); }
+    .bin-art svg { width: 34px; height: 34px; display: block; }
+    .bin-title { font-family: "Baloo 2", cursive; font-size: 14.5px; font-weight: 800; color: var(--ink); line-height: 1.1; }
+    .bin-sub { font-size: 10.5px; color: var(--muted); font-weight: 600; }
+    .feedback-banner { margin-top: 10px; padding: 9px 12px; border-radius: 14px; font-size: 12px; font-weight: 700; min-height: 38px; display: flex; align-items: center; justify-content: center; text-align: center; background: var(--cream); color: var(--muted); border: 1px solid var(--line); }
+    .feedback-banner.ok { background: var(--emerald-soft); color: var(--emerald-deep); border-color: #9ED0B7; }
+    .feedback-banner.err { background: var(--alert-soft); color: var(--alert); border-color: #EBB0A8; }
+    .card { background: var(--cream-card); border: 2px solid var(--line); border-radius: 20px; padding: 14px; box-shadow: 0 5px 15px rgba(28, 43, 35, 0.05); }
+    .card-heading { font-family: "Baloo 2", cursive; font-size: 15px; font-weight: 800; color: var(--emerald-deep); margin: 0 0 8px 0; display: flex; justify-content: space-between; align-items: center; }
+    .card-note { font-family: "Poppins", sans-serif; font-size: 10.5px; font-weight: 700; color: var(--muted); background: var(--cream); padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line); }
+    .upgrade-list { display: flex; flex-direction: column; gap: 8px; }
+    .upgrade-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; border-radius: 14px; background: #FFFFFF; border: 1.5px solid var(--line); gap: 10px; }
+    .upgrade-name { font-size: 13px; font-weight: 800; color: var(--ink); }
+    .upgrade-desc { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .btn { border: none; border-radius: 12px; padding: 9px 13px; font-size: 12px; font-weight: 800; cursor: pointer; white-space: nowrap; }
+    .btn-primary { background: var(--emerald); color: #FFFFFF; }
+    .btn-gold { background: var(--gold); color: #FFFFFF; }
+    .btn-ghost { background: #EAE4D2; color: var(--ink); }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .brand-footer { background: var(--cream); border: 2px solid var(--line); border-bottom: 4px solid var(--gold); border-radius: 18px; padding: 11px 14px; text-align: center; font-size: 10.5px; color: var(--muted); line-height: 1.45; }
+    .brand-footer strong { color: var(--emerald-deep); }
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(12, 34, 23, 0.62); display: none; justify-content: center; align-items: center; padding: 18px; z-index: 50; }
+    .modal-backdrop.open { display: flex; }
+    .modal-box { background: var(--cream-card); border: 2.5px solid var(--emerald); border-radius: 22px; padding: 20px; width: 100%; max-width: 410px; text-align: center; }
+    .modal-title { font-family: "Baloo 2", cursive; font-size: 20px; font-weight: 800; color: var(--emerald-deep); margin: 0 0 8px 0; }
+    .modal-body { font-size: 13px; color: var(--muted); line-height: 1.55; margin: 0 0 16px 0; }
+    .modal-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="brand-header">
+      <div class="rub-badge-wrap">
+        <div class="rub-emblem" aria-hidden="true">
+          <svg viewBox="0 0 40 40" width="28" height="28">
+            <rect x="9" y="9" width="22" height="22" fill="none" stroke="#0B6B3A" stroke-width="2.4"/>
+            <rect x="9" y="9" width="22" height="22" transform="rotate(45 20 20)" fill="none" stroke="#D4A017" stroke-width="2.2"/>
+            <circle cx="20" cy="20" r="3.5" fill="#0B6B3A"/>
+          </svg>
+        </div>
+        <div>
+          <div class="parent-title">MAJELIS TA'LIM AL MUTTAQIN</div>
+          <span class="subbrand-pill">KISAH AL-MUTTAQIN • SANTRI CILIK</span>
+        </div>
+      </div>
+      <div class="stats-row">
+        <div class="pill gold" id="bijiPill">Biji: 10</div>
+        <div class="pill sky" id="levelPill">Level 1/5</div>
+        <div class="pill" id="soundPill" onclick="toggleSound()">Suara: ON</div>
+        <div class="pill" id="resetPill" onclick="confirmResetSave()">Reset</div>
+      </div>
+    </header>
+
+    <section class="hero-world">
+      <div class="world-banner" id="villageBanner"></div>
+      <div class="world-tag-bar">
+        <span>“Belajar Islam Ceria, Tumbuh Berakhlak Mulia”</span>
+        <span id="upgradeCounter">Fasilitas: 0/3</span>
+      </div>
+      <div class="game-area">
+        <div class="level-bar">
+          <span class="level-badge" id="levelBadge">Level 1: Ruang Belajar Santri Cilik</span>
+          <span class="timer-badge" id="timerBox">Waktu: 60s</span>
+        </div>
+        <p class="mission-copy" id="missionText">Bantu Al Qosam &amp; Kak Zahra merapikan benda ke wadah yang tepat. Ketuk wadah atau geser kartu benda.</p>
+        <div class="hud-strip">
+          <span id="shieldHud">Amanah: 3/3</span>
+          <span id="comboHud">Kombo: 0x</span>
+          <span id="progressHud">Target: 0/8</span>
+        </div>
+        <div class="stage-box">
+          <div class="item-card" id="currentItemCard" draggable="true">
+            <div class="item-art" id="currentItemArt"></div>
+            <div class="item-label" id="currentItemLabel">Buku Pelajaran A5</div>
+          </div>
+          <div class="stage-hint">Ketuk wadah di bawah atau seret kartu ke wadah</div>
+        </div>
+        <div class="bins-grid" id="binsGrid"></div>
+        <div class="feedback-banner" id="feedbackBanner">Bismillah! Pilih wadah yang paling tepat.</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-heading">
+        <span>Pembangunan Kampung Al Muttaqin</span>
+        <span class="card-note">Auto-Save</span>
+      </div>
+      <div class="upgrade-list" id="upgradesList"></div>
+    </section>
+
+    <footer class="brand-footer">
+      <strong>Majelis Ta'lim Al Muttaqin</strong> • “Membangun Generasi Cinta Al-Qur'an”<br />
+      Jl. H. Djairi, RT 05/RW 02, No. 171, Rawa Buaya, Cengkareng, Jakarta Barat
+    </footer>
+  </div>
+
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal-box">
+      <h2 class="modal-title" id="modalTitle">Ronde Selesai</h2>
+      <p class="modal-body" id="modalBody"></p>
+      <div class="modal-actions" id="modalActions"></div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "jejak_kebaikan_almuttaqin_v5";
+    const ART = {
+      book: `<svg viewBox="0 0 64 64"><rect x="11" y="9" width="42" height="46" rx="7" fill="#0B6B3A"/><rect x="16" y="14" width="32" height="36" rx="4" fill="#FFFDF7"/><rect x="21" y="21" width="22" height="5" rx="2.5" fill="#D4A017"/><rect x="21" y="30" width="18" height="3.5" rx="1.75" fill="#46A5D7"/><rect x="21" y="37" width="20" height="3.5" rx="1.75" fill="#8BB8A2"/></svg>`,
+      pencil: `<svg viewBox="0 0 64 64"><path d="M15 49 L22 33 L44 11 L53 20 L31 42 Z" fill="#F2B938" stroke="#074A28" stroke-width="2.2"/><polygon points="15,49 22,33 31,42" fill="#F8E2C2"/><polygon points="15,49 19,40 24,45" fill="#1C2B23"/><rect x="42" y="11" width="11" height="9" rx="2" transform="rotate(45 47.5 15.5)" fill="#E79BB3"/></svg>`,
+      board: `<svg viewBox="0 0 64 64"><rect x="9" y="13" width="46" height="31" rx="6" fill="#0B6B3A" stroke="#D4A017" stroke-width="3"/><line x1="22" y1="44" x2="17" y2="55" stroke="#7A5404" stroke-width="3.2" stroke-linecap="round"/><line x1="42" y1="44" x2="47" y2="55" stroke="#7A5404" stroke-width="3.2" stroke-linecap="round"/><path d="M19 26 H45 M19 34 H36" stroke="#E5F4FC" stroke-width="3" stroke-linecap="round"/></svg>`,
+      ruler: `<svg viewBox="0 0 64 64"><rect x="9" y="21" width="46" height="22" rx="5" fill="#46A5D7" stroke="#16597D" stroke-width="2.2"/><line x1="18" y1="21" x2="18" y2="30" stroke="#FFF" stroke-width="2.2"/><line x1="27" y1="21" x2="27" y2="28" stroke="#FFF" stroke-width="2.2"/><line x1="36" y1="21" x2="36" y2="30" stroke="#FFF" stroke-width="2.2"/><line x1="45" y1="21" x2="45" y2="28" stroke="#FFF" stroke-width="2.2"/></svg>`,
+      ball: `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="20" fill="#E79BB3" stroke="#9C4B66" stroke-width="2.2"/><path d="M15 22 Q32 32 49 22 M15 42 Q32 32 49 42" fill="none" stroke="#FFFDF7" stroke-width="2.5"/></svg>`,
+      spill: `<svg viewBox="0 0 64 64"><rect x="24" y="13" width="16" height="29" rx="5" fill="#46A5D7"/><rect x="27" y="8" width="10" height="5" rx="2" fill="#0B6B3A"/><ellipse cx="32" cy="50" rx="19" ry="6" fill="#9AD6F5"/></svg>`,
+      toycar: `<svg viewBox="0 0 64 64"><path d="M13 36 L20 23 H42 L49 36 H53 V45 H11 V36 Z" fill="#E79BB3" stroke="#8C435B" stroke-width="2"/><circle cx="21" cy="46" r="5.5" fill="#1C2B23"/><circle cx="43" cy="46" r="5.5" fill="#1C2B23"/><rect x="23" y="26" width="17" height="7" rx="2.5" fill="#E5F4FC"/></svg>`,
+      shoe: `<svg viewBox="0 0 64 64"><path d="M11 43 H53 V48 H11 Z" fill="#7D6B5D"/><path d="M13 43 V29 L26 27 L35 35 H51 C53 35 54 39 53 43 Z" fill="#B59479"/><circle cx="20" cy="51" r="2.2" fill="#9E8774"/><circle cx="37" cy="52" r="2.6" fill="#9E8774"/></svg>`,
+      prayer_mat: `<svg viewBox="0 0 64 64"><rect x="15" y="9" width="34" height="46" rx="6" fill="#0B6B3A"/><rect x="19" y="13" width="26" height="38" rx="3" fill="none" stroke="#D4A017" stroke-width="2.2"/><path d="M23 36 V24 L32 17 L41 24 V36 Z" fill="#D4A017"/></svg>`,
+      quran: `<svg viewBox="0 0 64 64"><rect x="14" y="10" width="36" height="44" rx="6" fill="#0B6B3A"/><rect x="18" y="14" width="28" height="36" rx="3" fill="none" stroke="#D4A017" stroke-width="2.2"/><polygon points="32,22 37,27 42,32 37,37 32,42 27,37 22,32 27,27" fill="#D4A017"/></svg>`,
+      peci: `<svg viewBox="0 0 64 64"><path d="M13 37 C13 22 51 22 51 37 V44 H13 Z" fill="#185B43"/><rect x="13" y="39" width="38" height="4.5" fill="#D4A017"/></svg>`,
+      tasbih: `<svg viewBox="0 0 64 64"><circle cx="32" cy="29" r="15" fill="none" stroke="#0B6B3A" stroke-width="4.2" stroke-dasharray="4.5 3"/><line x1="32" y1="44" x2="32" y2="55" stroke="#D4A017" stroke-width="3.2" stroke-linecap="round"/></svg>`,
+      trash: `<svg viewBox="0 0 64 64"><polygon points="18,22 46,22 42,51 22,51" fill="#C44536"/><rect x="15" y="17" width="34" height="5" rx="2.5" fill="#8C2F24"/><path d="M27 28 V45 M32 28 V45 M37 28 V45" stroke="#FDECE9" stroke-width="2.2"/></svg>`,
+      banana: `<svg viewBox="0 0 64 64"><path d="M17 43 C24 21 41 15 49 19 C45 36 32 47 17 43 Z" fill="#F2C94C" stroke="#9E7B16" stroke-width="2.2"/></svg>`,
+      sack: `<svg viewBox="0 0 64 64"><path d="M19 20 H45 L49 49 C49 52 46 54 42 54 H22 C18 54 15 52 15 49 Z" fill="#E8D8B9" stroke="#7A5404" stroke-width="2.2"/><path d="M21 20 L18 13 H46 L43 20" fill="#D4A017"/></svg>`,
+      honey: `<svg viewBox="0 0 64 64"><rect x="19" y="20" width="26" height="31" rx="7" fill="#D4A017"/><rect x="23" y="12" width="18" height="8" rx="2.5" fill="#0B6B3A"/><circle cx="32" cy="35" r="6.5" fill="#FFF4D2"/></svg>`,
+      scale: `<svg viewBox="0 0 64 64"><rect x="17" y="45" width="30" height="8" rx="3.5" fill="#0B6B3A"/><line x1="32" y1="19" x2="32" y2="45" stroke="#074A28" stroke-width="3.2"/><line x1="15" y1="21" x2="49" y2="21" stroke="#D4A017" stroke-width="3.2"/><path d="M11 21 L15 32 L19 21 Z M45 21 L49 32 L53 21 Z" fill="#46A5D7"/></svg>`,
+      broken: `<svg viewBox="0 0 64 64"><rect x="17" y="17" width="30" height="34" rx="5" fill="#E79BB3" stroke="#9C4B66" stroke-width="2"/><path d="M24 26 L35 33 L27 42" fill="none" stroke="#FFF" stroke-width="2.8"/></svg>`,
+      clock_good: `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="20" fill="#E3F2EA" stroke="#0B6B3A" stroke-width="3.2"/><path d="M32 19 V32 L41 37" fill="none" stroke="#074A28" stroke-width="3.2" stroke-linecap="round"/></svg>`,
+      screen_bad: `<svg viewBox="0 0 64 64"><rect x="13" y="16" width="38" height="24" rx="4" fill="#374740"/><rect x="26" y="40" width="12" height="6" fill="#6D7E76"/><line x1="21" y1="22" x2="43" y2="34" stroke="#C44536" stroke-width="3.2"/></svg>`,
+      heart_good: `<svg viewBox="0 0 64 64"><path d="M32 51 C15 39 11 27 19 19 C24 14 30 17 32 22 C34 17 40 14 45 19 C53 27 49 39 32 51 Z" fill="#0B6B3A" stroke="#D4A017" stroke-width="2.2"/></svg>`,
+      warn_bad: `<svg viewBox="0 0 64 64"><polygon points="32,13 53,49 11,49" fill="#FDECE9" stroke="#C44536" stroke-width="3"/><line x1="32" y1="24" x2="32" y2="37" stroke="#C44536" stroke-width="3.5" stroke-linecap="round"/><circle cx="32" cy="43" r="2.2" fill="#C44536"/></svg>`
+    };
+    const LEVELS = [
+      { title: "Level 1: Ruang Belajar Santri Cilik", mission: "Pisahkan perlengkapan belajar tertib dengan benda yang mengganggu konsentrasi belajar.", targetCount: 8, duration: 60, bins: [{ id: "belajar", label: "Rak Belajar", sub: "Alat tulis & buku A5", art: "book" }, { id: "simpan", label: "Kotak Simpan", sub: "Benda bermain / luar", art: "toycar" }], items: [{ name: "Buku Pelajaran A5", bin: "belajar", art: "book" }, { name: "Pensil & Rautan", bin: "belajar", art: "pencil" }, { name: "Papan Tulis Kecil", bin: "belajar", art: "board" }, { name: "Penggaris Kayu", bin: "belajar", art: "ruler" }, { name: "Bola Karet", bin: "simpan", art: "ball" }, { name: "Botol Minum Tumpah", bin: "simpan", art: "spill" }, { name: "Mainan Mobilan", bin: "simpan", art: "toycar" }, { name: "Sepatu Debu", bin: "simpan", art: "shoe" }] },
+      { title: "Level 2: Adab Masjid & Kebersihan", mission: "Arahkan perlengkapan ibadah ke Area Masjid dan benda kotor ke Tempat Bersih/Cuci.", targetCount: 9, duration: 58, bins: [{ id: "masjid", label: "Area Masjid", sub: "Perlengkapan ibadah", art: "quran" }, { id: "bersih", label: "Tempat Cuci / Buang", sub: "Kotoran & sampah", art: "trash" }], items: [{ name: "Sajadah Lipat", bin: "masjid", art: "prayer_mat" }, { name: "Al-Qur'an Saku", bin: "masjid", art: "quran" }, { name: "Peci Hijau Al Qosam", bin: "masjid", art: "peci" }, { name: "Tasbih Kayu", bin: "masjid", art: "tasbih" }, { name: "Kertas Bungkus Snack", bin: "bersih", art: "trash" }, { name: "Kain Lap Bernoda", bin: "bersih", art: "spill" }, { name: "Kulit Pisang", bin: "bersih", art: "banana" }, { name: "Tisu Bekas", bin: "bersih", art: "trash" }] },
+      { title: "Level 3: Amanah Pasar Kampung", mission: "Utamakan barang amanah/kebutuhan pokok pada Rak Amanah dan pisahkan barang rusak/salah letak.", targetCount: 10, duration: 55, bins: [{ id: "amanah", label: "Rak Amanah", sub: "Barang layak & tepat", art: "sack" }, { id: "cek", label: "Meja Pemeriksaan", sub: "Cek ulang / rusak", art: "broken" }], items: [{ name: "Beras Karung Rapi", bin: "amanah", art: "sack" }, { name: "Madu Murni Segel", bin: "amanah", art: "honey" }, { name: "Kurma Kemasan Utuh", bin: "amanah", art: "sack" }, { name: "Timbangan Terkalibrasi", bin: "amanah", art: "scale" }, { name: "Kaleng Penyok Bocor", bin: "cek", art: "broken" }, { name: "Label Harga Tertukar", bin: "cek", art: "warn_bad" }, { name: "Buah Layu Busuk", bin: "cek", art: "banana" }, { name: "Nota Belum Tercatat", bin: "cek", art: "broken" }] },
+      { title: "Level 4: Jadwal Harian Santri Cilik", mission: "Kelompokkan aktivitas produktif/ibadah ke Jadwal Utama dan distraksi berlebih ke Batas Waktu.", targetCount: 11, duration: 52, bins: [{ id: "utama", label: "Jadwal Utama", sub: "Mengaji, belajar & bantu", art: "clock_good" }, { id: "batas", label: "Batas Santai", sub: "Kurangi / atur waktu", art: "screen_bad" }], items: [{ name: "Muroja'ah Pagi", bin: "utama", art: "quran" }, { name: "Menyiapkan Seragam", bin: "utama", art: "clock_good" }, { name: "Membantu Umi di Rumah", bin: "utama", art: "heart_good" }, { name: "Menyiram Tanaman", bin: "utama", art: "clock_good" }, { name: "Menonton Layar Berjam-jam", bin: "batas", art: "screen_bad" }, { name: "Menunda Waktu Tidur", bin: "batas", art: "warn_bad" }, { name: "Main Terlalu Larut", bin: "batas", art: "screen_bad" }, { name: "Mengabaikan Tugas Belajar", bin: "batas", art: "warn_bad" }] },
+      { title: "Level 5: Harmoni Kampung Al Muttaqin", mission: "Tantangan puncak! Jaga ketertiban & akhlak mulia di Kampung Al Muttaqin.", targetCount: 12, duration: 50, bins: [{ id: "kebaikan", label: "Jejak Kebaikan", sub: "Tertib, amanah & peduli", art: "heart_good" }, { id: "perbaikan", label: "Perlu Perbaikan", sub: "Kelalaian & kekacauan", art: "warn_bad" }], items: [{ name: "Berbagi Bekal Teman", bin: "kebaikan", art: "heart_good" }, { name: "Mengembalikan Barang Temuan", bin: "kebaikan", art: "scale" }, { name: "Menyapa Guru & Tetangga", bin: "kebaikan", art: "heart_good" }, { name: "Merapikan Sandal Berjajar", bin: "kebaikan", art: "prayer_mat" }, { name: "Membuang Sampah Sembarangan", bin: "perbaikan", art: "trash" }, { name: "Menyerobot Antrean", bin: "perbaikan", art: "warn_bad" }, { name: "Berbicara Kasar", bin: "perbaikan", art: "warn_bad" }, { name: "Membiarkan Keran Menetes", bin: "perbaikan", art: "spill" }] }
+    ];
+    const UPGRADES = [
+      { id: "taman", name: "Taman Hijau Masjid", desc: "Pepohonan teduh di Kampung & +2 Biji bonus tiap menang", cost: 15 },
+      { id: "lentera", name: "Lentera Jalan Kampung", desc: "Lentera hangat di Kampung & +1 Amanah awal Level 3+", cost: 25 },
+      { id: "rak_kitab", name: "Saung Literasi & Kitab", desc: "Saung baca santri cilik & +1 Biji tiap jawaban tepat", cost: 40 }
+    ];
+    function defaultState() { return { levelIdx: 0, biji: 10, shields: 3, combo: 0, solved: 0, timeLeft: 60, roundsPlayed: 0, soundOn: true, upgrades: { taman: false, lentera: false, rak_kitab: false }, currentItem: null }; }
+    function loadState() {
+      try { const raw = localStorage.getItem(STORAGE_KEY); if (!raw) return defaultState(); const parsed = JSON.parse(raw); return { ...defaultState(), ...parsed, upgrades: { ...defaultState().upgrades, ...(parsed.upgrades || {}) } }; } catch (e) { return defaultState(); }
+    }
+    function saveState() {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ levelIdx: state.levelIdx, biji: state.biji, roundsPlayed: state.roundsPlayed, soundOn: state.soundOn, upgrades: state.upgrades })); } catch (e) {}
+    }
+    let state = loadState(), timerInterval = null, audioCtx = null;
+    function renderVillageBanner() {
+      const u = state.upgrades;
+      const trees = u.taman ? `<g><circle cx="62" cy="82" r="18" fill="#1FA162"/><circle cx="78" cy="86" r="14" fill="#0B6B3A"/><rect x="68" y="92" width="5" height="16" rx="2" fill="#7A5404"/><circle cx="384" cy="83" r="17" fill="#1FA162"/><rect x="382" y="93" width="5" height="15" rx="2" fill="#7A5404"/></g>` : `<g opacity="0.35"><circle cx="64" cy="94" r="9" fill="#82B39C"/></g>`;
+      const lanterns = u.lentera ? `<g><line x1="118" y1="68" x2="118" y2="108" stroke="#473B2F" stroke-width="3"/><circle cx="118" cy="65" r="6.5" fill="#FFD166"/><circle cx="118" cy="65" r="12" fill="#FFD166" opacity="0.35"/><line x1="336" y1="68" x2="336" y2="108" stroke="#473B2F" stroke-width="3"/><circle cx="336" cy="65" r="6.5" fill="#FFD166"/><circle cx="336" cy="65" r="12" fill="#FFD166" opacity="0.35"/></g>` : ``;
+      const saung = u.rak_kitab ? `<g><polygon points="282,72 306,56 330,72" fill="#0B6B3A" stroke="#D4A017" stroke-width="2"/><rect x="287" y="72" width="38" height="32" rx="3" fill="#FFFDF7" stroke="#7A5404" stroke-width="2"/><rect x="293" y="79" width="26" height="5" rx="2" fill="#46A5D7"/><rect x="293" y="88" width="26" height="5" rx="2" fill="#D4A017"/></g>` : ``;
+      const builtCount = (u.taman ? 1 : 0) + (u.lentera ? 1 : 0) + (u.rak_kitab ? 1 : 0);
+      document.getElementById("upgradeCounter").textContent = `Fasilitas: ${builtCount}/3`;
+      document.getElementById("villageBanner").innerHTML = `<svg viewBox="0 0 440 136" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="skyBrand" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#D7EFFB"/><stop offset="65%" stop-color="#ECF7F1"/><stop offset="100%" stop-color="#F8F4E6"/></linearGradient></defs><rect width="440" height="136" fill="url(#skyBrand)"/><circle cx="392" cy="28" r="15" fill="#F6C85F" opacity="0.9"/><ellipse cx="92" cy="28" rx="24" ry="8" fill="#FFFFFF" opacity="0.8"/><ellipse cx="260" cy="22" rx="20" ry="7" fill="#FFFFFF" opacity="0.7"/><path d="M0 106 Q110 92 220 104 T440 98 V136 H0 Z" fill="#A9D5BE"/><path d="M0 110 Q160 102 310 110 T440 106 V136 H0 Z" fill="#6BAE8A"/><rect x="166" y="60" width="88" height="48" rx="4" fill="#FFFDF7" stroke="#0B6B3A" stroke-width="2.2"/><path d="M180 60 C180 34 240 34 240 60 Z" fill="#0B6B3A"/><line x1="210" y1="24" x2="210" y2="36" stroke="#D4A017" stroke-width="2.5"/><circle cx="210" cy="21" r="3.5" fill="#D4A017"/><rect x="147" y="38" width="15" height="70" rx="2" fill="#F8F4E6" stroke="#0B6B3A" stroke-width="2.2"/><polygon points="145,38 154.5,22 164,38" fill="#D4A017"/><path d="M201 108 V85 C201 78 219 78 219 85 V108 Z" fill="#074A28"/>${trees}${saung}${lanterns}<g transform="translate(242, 76)"><circle cx="11" cy="9" r="6.5" fill="#F4C7A1"/><path d="M4 6 C4 1 18 1 18 6 Z" fill="#185B43"/><rect x="5" y="16" width="12" height="16" rx="4" fill="#0B6B3A"/></g><g transform="translate(262, 78)"><circle cx="10" cy="9" r="6.5" fill="#F4C7A1"/><path d="M3 9 C3 1 17 1 17 9 L18 20 H2 Z" fill="#E79BB3" stroke="#9C4B66" stroke-width="1.4"/><rect x="4" y="16" width="12" height="14" rx="4" fill="#FFFDF7" stroke="#D4A017" stroke-width="1.2"/></g></svg>`;
+    }
+    function playTone(type) {
+      if (!state.soundOn) return;
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        if (type === "ok") { osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.08); gain.gain.setValueAtTime(0.08, audioCtx.currentTime); osc.start(); osc.stop(audioCtx.currentTime + 0.18); }
+        else if (type === "err") { osc.type = "triangle"; osc.frequency.setValueAtTime(220, audioCtx.currentTime); gain.gain.setValueAtTime(0.08, audioCtx.currentTime); osc.start(); osc.stop(audioCtx.currentTime + 0.16); }
+        else { osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2); gain.gain.setValueAtTime(0.09, audioCtx.currentTime); osc.start(); osc.stop(audioCtx.currentTime + 0.34); }
+      } catch (e) {}
+    }
+    function toggleSound() { state.soundOn = !state.soundOn; document.getElementById("soundPill").textContent = "Suara: " + (state.soundOn ? "ON" : "OFF"); saveState(); }
+    function confirmResetSave() {
+      openModal("Reset Progres Permainan?", "Biji Kebaikan, level tersimpan, dan fasilitas Kampung Al Muttaqin akan dikembalikan ke kondisi awal.", [
+        { label: "Batal", cls: "btn-ghost", action: () => closeModal() },
+        { label: "Ya, Reset", cls: "btn-primary", action: () => { localStorage.removeItem(STORAGE_KEY); state = defaultState(); closeModal(); setupLevel(0, true); } }
+      ]);
+    }
+    function pickNextItem() {
+      const lvl = LEVELS[state.levelIdx], base = lvl.items[Math.floor(Math.random() * lvl.items.length)], isBonus = Math.random() < 0.22;
+      state.currentItem = { ...base, isBonus };
+      const card = document.getElementById("currentItemCard");
+      document.getElementById("currentItemArt").innerHTML = ART[base.art] || ART.book;
+      document.getElementById("currentItemLabel").textContent = (isBonus ? "★ " : "") + base.name;
+      card.className = "item-card" + (isBonus ? " bonus" : "");
+    }
+    function setupLevel(idx, resetTimer = true) {
+      clearInterval(timerInterval);
+      const safeIdx = Math.max(0, Math.min(idx, LEVELS.length - 1));
+      state.levelIdx = safeIdx; const lvl = LEVELS[safeIdx];
+      state.solved = 0; state.combo = 0; state.shields = (safeIdx >= 2 && state.upgrades.lentera) ? 4 : 3;
+      if (resetTimer) state.timeLeft = lvl.duration;
+      document.getElementById("soundPill").textContent = "Suara: " + (state.soundOn ? "ON" : "OFF");
+      document.getElementById("levelPill").textContent = `Level ${safeIdx + 1}/${LEVELS.length}`;
+      document.getElementById("levelBadge").textContent = lvl.title;
+      document.getElementById("missionText").textContent = lvl.mission;
+      const binsGrid = document.getElementById("binsGrid"); binsGrid.innerHTML = "";
+      lvl.bins.forEach(b => {
+        const btn = document.createElement("button"); btn.type = "button"; btn.className = "bin-btn";
+        btn.innerHTML = `<span class="bin-art">${ART[b.art] || ""}</span><span class="bin-title">${b.label}</span><span class="bin-sub">${b.sub}</span>`;
+        btn.onclick = () => handleChoice(b.id);
+        btn.ondragover = (e) => { e.preventDefault(); btn.classList.add("drag-over"); };
+        btn.ondragleave = () => btn.classList.remove("drag-over");
+        btn.ondrop = (e) => { e.preventDefault(); btn.classList.remove("drag-over"); handleChoice(b.id); };
+        binsGrid.appendChild(btn);
+      });
+      pickNextItem(); renderVillageBanner(); renderHud(); renderUpgrades(); saveState();
+      timerInterval = setInterval(() => {
+        state.timeLeft -= 1; renderHud();
+        if (state.timeLeft <= 0) {
+          clearInterval(timerInterval);
+          openModal("Waktu Ronde Habis", "Tidak apa-apa, ketelitian butuh latihan bertahap. Yuk coba lagi ronde ini dengan tenang!", [
+            { label: "Ulangi Ronde", cls: "btn-primary", action: () => { closeModal(); setupLevel(state.levelIdx, true); } }
+          ]);
+        }
+      }, 1000);
+    }
+    function handleChoice(binId) {
+      if (!state.currentItem) return;
+      const lvl = LEVELS[state.levelIdx], banner = document.getElementById("feedbackBanner");
+      if (binId === state.currentItem.bin) {
+        state.combo += 1; state.solved += 1;
+        let gainBiji = state.currentItem.isBonus ? 4 : 2;
+        if (state.combo >= 3) gainBiji += 1;
+        if (state.upgrades.rak_kitab) gainBiji += 1;
+        state.biji += gainBiji; saveState(); playTone("ok");
+        banner.className = "feedback-banner ok";
+        banner.textContent = `Mumtaz! "${state.currentItem.name}" tertata rapi (+${gainBiji} Biji Kebaikan).`;
+        if (state.solved >= lvl.targetCount) {
+          clearInterval(timerInterval); state.roundsPlayed += 1;
+          let bonusWin = 5 + (state.upgrades.taman ? 2 : 0);
+          state.biji += bonusWin; saveState(); playTone("win");
+          if (state.roundsPlayed % 3 === 0) {
+            openModal("Jeda Sehat Bermain", `Hebat! Kamu sudah menyelesaikan ${state.roundsPlayed} ronde dan mendapat bonus +${bonusWin} Biji Kebaikan. Istirahatkan mata sejenak, minum air putih, lalu lanjutkan bila siap.`, [
+              { label: state.levelIdx < LEVELS.length - 1 ? "Lanjut Level Berikutnya" : "Main Lagi dari Level 1", cls: "btn-primary", action: () => { closeModal(); setupLevel(state.levelIdx < LEVELS.length - 1 ? state.levelIdx + 1 : 0, true); } }
+            ]);
+            return;
+          }
+          if (state.levelIdx < LEVELS.length - 1) {
+            openModal(lvl.title + " Tuntas!", `Alhamdulillah, target tercapai dan kamu memperoleh tambahan +${bonusWin} Biji Kebaikan.`, [
+              { label: "Lanjut ke Level " + (state.levelIdx + 2), cls: "btn-primary", action: () => { closeModal(); setupLevel(state.levelIdx + 1, true); } }
+            ]);
+          } else {
+            openModal("Harmoni Kampung Tercapai!", `Masya Allah, seluruh 5 level Jejak Kebaikan Kampung selesai dengan total ${state.biji} Biji Kebaikan.`, [
+              { label: "Mulai Ulang dari Level 1", cls: "btn-gold", action: () => { closeModal(); setupLevel(0, true); } }
+            ]);
+          }
+          return;
+        }
+        pickNextItem();
+      } else {
+        state.combo = 0; state.shields -= 1; playTone("err");
+        banner.className = "feedback-banner err";
+        banner.textContent = `Kurang tepat untuk "${state.currentItem.name}". Amanah berkurang 1 — perhatikan fungsinya ya.`;
+        if (state.shields <= 0) {
+          clearInterval(timerInterval);
+          openModal("Amanah Perlu Diperbaiki", "Beberapa penempatan masih keliru. Tarik napas dulu, amati kategori wadahnya, lalu ulangi ronde ini.", [
+            { label: "Coba Lagi", cls: "btn-primary", action: () => { closeModal(); setupLevel(state.levelIdx, true); } }
+          ]);
+          return;
+        }
+        pickNextItem();
+      }
+      renderHud(); renderUpgrades();
+    }
+    function buyUpgrade(id) {
+      const upg = UPGRADES.find(u => u.id === id);
+      if (!upg || state.upgrades[id] || state.biji < upg.cost) return;
+      state.biji -= upg.cost; state.upgrades[id] = true; saveState(); playTone("win");
+      renderVillageBanner(); renderHud(); renderUpgrades();
+    }
+    function renderHud() {
+      const lvl = LEVELS[state.levelIdx], maxShields = (state.levelIdx >= 2 && state.upgrades.lentera) ? 4 : 3;
+      document.getElementById("bijiPill").textContent = "Biji: " + state.biji;
+      document.getElementById("shieldHud").textContent = `Amanah: ${state.shields}/${maxShields}`;
+      document.getElementById("comboHud").textContent = `Kombo: ${state.combo}x`;
+      document.getElementById("progressHud").textContent = `Target: ${state.solved}/${lvl.targetCount}`;
+      const timerBox = document.getElementById("timerBox");
+      timerBox.textContent = `Waktu: ${state.timeLeft}s`;
+      timerBox.className = "timer-badge" + (state.timeLeft <= 10 ? " warn" : "");
+    }
+    function renderUpgrades() {
+      const list = document.getElementById("upgradesList"); list.innerHTML = "";
+      UPGRADES.forEach(upg => {
+        const owned = state.upgrades[upg.id];
+        const row = document.createElement("div"); row.className = "upgrade-row";
+        row.innerHTML = `<div><div class="upgrade-name">${upg.name}</div><div class="upgrade-desc">${upg.desc}</div></div>`;
+        const btn = document.createElement("button"); btn.type = "button";
+        btn.className = "btn " + (owned ? "btn-ghost" : "btn-gold");
+        btn.textContent = owned ? "Terpasang" : `${upg.cost} Biji`;
+        btn.disabled = owned || state.biji < upg.cost;
+        btn.onclick = () => buyUpgrade(upg.id);
+        row.appendChild(btn); list.appendChild(row);
+      });
+    }
+    function openModal(title, body, actions) {
+      document.getElementById("modalTitle").textContent = title;
+      document.getElementById("modalBody").textContent = body;
+      const box = document.getElementById("modalActions"); box.innerHTML = "";
+      actions.forEach(act => {
+        const b = document.createElement("button"); b.type = "button"; b.className = "btn " + act.cls; b.textContent = act.label; b.onclick = act.action;
+        box.appendChild(b);
+      });
+      document.getElementById("modalBackdrop").classList.add("open");
+    }
+    function closeModal() { document.getElementById("modalBackdrop").classList.remove("open"); }
+    setupLevel(state.levelIdx || 0, true);
+  </script>
+</body>
+</html>

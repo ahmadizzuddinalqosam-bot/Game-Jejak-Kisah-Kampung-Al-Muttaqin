@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#144731" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="manifest" href="./manifest.json" />
+  <title>Jejak Kebaikan Kampung — Al Muttaqin</title>
+  <style>
+    :root {
+      --bg-cream: #FBF7F0;
+      --bg-card: #FFFFFF;
+      --emerald-dark: #144731;
+      --emerald: #1E6B4B;
+      --emerald-soft: #E5F2EC;
+      --gold: #C88A1E;
+      --gold-light: #FFF5DF;
+      --terracotta: #B84A39;
+      --terracotta-soft: #FDECE9;
+      --text-main: #1E2923;
+      --text-muted: #586960;
+      --border-soft: #E2DDD2;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: linear-gradient(180deg, #EBF4EF 0%, var(--bg-cream) 45%, #F4EFE6 100%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+    }
+    .app-shell {
+      width: 100%;
+      max-width: 480px;
+      min-height: 100vh;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .top-bar {
+      background: var(--emerald-dark);
+      color: #FFFFFF;
+      border-radius: 18px;
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 6px 18px rgba(20, 71, 49, 0.16);
+      gap: 8px;
+    }
+    .brand-title { font-size: 16px; font-weight: 700; letter-spacing: 0.2px; }
+    .brand-sub { font-size: 11px; color: #CBE6DA; margin-top: 2px; }
+    .stats-row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+    .pill {
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+    .pill.gold { background: var(--gold-light); color: #7C5107; border-color: #E7C27D; cursor: default; }
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-soft);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 4px 14px rgba(30, 41, 35, 0.05);
+    }
+    .level-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      gap: 8px;
+    }
+    .level-badge {
+      background: var(--emerald-soft);
+      color: var(--emerald-dark);
+      font-weight: 700;
+      font-size: 12px;
+      padding: 5px 10px;
+      border-radius: 10px;
+    }
+    .timer-box {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--emerald-dark);
+      background: #F3F6F4;
+      padding: 5px 10px;
+      border-radius: 10px;
+    }
+    .timer-box.warn { background: var(--terracotta-soft); color: var(--terracotta); }
+    .mission-text {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.45;
+      margin: 0 0 12px 0;
+    }
+    .hud-strip {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #FAF8F4;
+      border: 1px solid var(--border-soft);
+      border-radius: 12px;
+      padding: 8px 12px;
+      margin-bottom: 14px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .active-item-stage {
+      background: linear-gradient(135deg, #F6FBF8 0%, #FFF9EC 100%);
+      border: 2px dashed #9AC2B0;
+      border-radius: 16px;
+      padding: 16px 12px;
+      text-align: center;
+      margin-bottom: 14px;
+      min-height: 118px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .item-chip {
+      background: #FFFFFF;
+      border: 2px solid var(--emerald);
+      color: var(--emerald-dark);
+      padding: 12px 18px;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 700;
+      box-shadow: 0 6px 14px rgba(30, 107, 75, 0.12);
+      touch-action: none;
+      cursor: grab;
+    }
+    .item-chip.bonus {
+      border-color: var(--gold);
+      background: var(--gold-light);
+      color: #6E4603;
+    }
+    .item-hint { font-size: 11px; color: var(--text-muted); margin-top: 8px; }
+    .bins-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .bin-btn {
+      background: #FAF9F6;
+      border: 2px solid #D7D1C4;
+      border-radius: 14px;
+      padding: 14px 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.12s ease, border-color 0.12s ease, background 0.12s ease;
+    }
+    .bin-btn:active { transform: scale(0.97); }
+    .bin-btn.drag-over {
+      border-color: var(--emerald);
+      background: var(--emerald-soft);
+      transform: scale(1.02);
+    }
+    .bin-title { font-size: 14px; font-weight: 700; color: var(--text-main); display: block; }
+    .bin-sub { font-size: 11px; color: var(--text-muted); display: block; margin-top: 3px; }
+    .feedback-banner {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      min-height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      background: #F4F5F4;
+      color: var(--text-muted);
+    }
+    .feedback-banner.ok { background: var(--emerald-soft); color: var(--emerald-dark); }
+    .feedback-banner.err { background: var(--terracotta-soft); color: var(--terracotta); }
+    .village-list { display: flex; flex-direction: column; gap: 8px; }
+    .upgrade-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: #FAF8F5;
+      border: 1px solid var(--border-soft);
+      gap: 10px;
+    }
+    .upgrade-name { font-size: 13px; font-weight: 700; color: var(--text-main); }
+    .upgrade-desc { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+    .btn {
+      border: none;
+      border-radius: 11px;
+      padding: 9px 13px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-primary { background: var(--emerald); color: #FFFFFF; }
+    .btn-gold { background: var(--gold); color: #FFFFFF; }
+    .btn-ghost { background: #ECEAE4; color: var(--text-main); }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .footer-meta {
+      text-align: center;
+      font-size: 11px;
+      color: var(--text-muted);
+      padding-bottom: 12px;
+    }
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 28, 22, 0.58);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 18px;
+      z-index: 50;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal-box {
+      background: #FFFFFF;
+      border-radius: 20px;
+      padding: 20px;
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.22);
+    }
+    .modal-title { font-size: 18px; font-weight: 800; color: var(--emerald-dark); margin: 0 0 8px 0; }
+    .modal-body { font-size: 13px; color: var(--text-muted); line-height: 1.55; margin: 0 0 16px 0; }
+    .modal-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <div class="top-bar">
+      <div>
+        <div class="brand-title">Jejak Kebaikan Kampung</div>
+        <div class="brand-sub">Kampung Al Muttaqin • Final Release</div>
+      </div>
+      <div class="stats-row">
+        <div class="pill gold" id="bijiPill">Biji: 10</div>
+        <div class="pill" id="soundPill" onclick="toggleSound()">Suara: ON</div>
+        <div class="pill" id="resetPill" onclick="confirmResetSave()">Reset</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="level-header">
+        <span class="level-badge" id="levelBadge">Level 1 / 5</span>
+        <span class="timer-box" id="timerBox">Waktu: 60s</span>
+      </div>
+      <p class="mission-text" id="missionText">
+        Bantu merapikan benda ke wadah yang tepat. Ketuk wadah atau geser kartu benda.
+      </p>
+
+      <div class="hud-strip">
+        <span id="shieldHud">Amanah: 3/3</span>
+        <span id="comboHud">Kombo: 0x</span>
+        <span id="progressHud">Target: 0/8</span>
+      </div>
+
+      <div class="active-item-stage">
+        <div class="item-chip" id="currentItemChip" draggable="true">Buku Pelajaran</div>
+        <div class="item-hint">Ketuk salah satu wadah di bawah atau seret kartu ke wadah</div>
+      </div>
+
+      <div class="bins-grid" id="binsGrid"></div>
+      <div class="feedback-banner" id="feedbackBanner">Siap memulai! Pilih wadah yang paling sesuai.</div>
+    </div>
+
+    <div class="card">
+      <div class="level-header" style="margin-bottom: 8px;">
+        <span class="upgrade-name" style="font-size: 14px;">Pembangunan Kampung Al Muttaqin</span>
+        <span class="brand-sub" style="color: var(--text-muted); margin: 0;">Auto-Save Aktif</span>
+      </div>
+      <div class="village-list" id="upgradesList"></div>
+    </div>
+
+    <div class="footer-meta">
+      Jejak Kebaikan Kampung • Web Online &amp; APK Android Ready
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal-box">
+      <h2 class="modal-title" id="modalTitle">Ronde Selesai</h2>
+      <p class="modal-body" id="modalBody"></p>
+      <div class="modal-actions" id="modalActions"></div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "jejak_kebaikan_kampung_v1";
+
+    const LEVELS = [
+      {
+        title: "Level 1: Ruang Belajar Tertib",
+        mission: "Pisahkan perlengkapan belajar tertib dengan barang yang mengganggu konsentrasi belajar.",
+        targetCount: 8,
+        duration: 60,
+        bins: [
+          { id: "belajar", label: "Rak Belajar", sub: "Alat tulis & buku" },
+          { id: "simpan", label: "Kotak Simpan", sub: "Benda bermain / luar" }
+        ],
+        items: [
+          { name: "Buku Pelajaran", bin: "belajar" },
+          { name: "Pensil & Rautan", bin: "belajar" },
+          { name: "Papan Tulis Kecil", bin: "belajar" },
+          { name: "Penggaris Kayu", bin: "belajar" },
+          { name: "Bola Karet", bin: "simpan" },
+          { name: "Botol Minum Tumpah", bin: "simpan" },
+          { name: "Mainan Mobilan", bin: "simpan" },
+          { name: "Sepatu Debu", bin: "simpan" }
+        ]
+      },
+      {
+        title: "Level 2: Adab Masjid & Kebersihan",
+        mission: "Arahkan perlengkapan ibadah ke Area Masjid dan benda kotor ke Tempat Bersih/Cuci.",
+        targetCount: 9,
+        duration: 58,
+        bins: [
+          { id: "masjid", label: "Area Masjid", sub: "Perlengkapan ibadah" },
+          { id: "bersih", label: "Tempat Cuci / Buang", sub: "Kotoran & sampah" }
+        ],
+        items: [
+          { name: "Sajadah Lipat", bin: "masjid" },
+          { name: "Al-Qur'an Saku", bin: "masjid" },
+          { name: "Peci & Sarung", bin: "masjid" },
+          { name: "Tasbih Kayu", bin: "masjid" },
+          { name: "Kertas Bungkus Snack", bin: "bersih" },
+          { name: "Kain Lap Bernoda", bin: "bersih" },
+          { name: "Kulit Pisang", bin: "bersih" },
+          { name: "Tisu Bekas", bin: "bersih" }
+        ]
+      },
+      {
+        title: "Level 3: Amanah Pasar Kampung",
+        mission: "Utamakan barang amanah/kebutuhan pokok pada Rak Amanah dan pisahkan barang rusak/salah letak.",
+        targetCount: 10,
+        duration: 55,
+        bins: [
+          { id: "amanah", label: "Rak Amanah", sub: "Barang layak & tepat" },
+          { id: "cek", label: "Meja Pemeriksaan", sub: "Cek ulang / rusak" }
+        ],
+        items: [
+          { name: "Beras Karung Rapi", bin: "amanah" },
+          { name: "Madu Murni Segel", bin: "amanah" },
+          { name: "Kurma Kemasan Utuh", bin: "amanah" },
+          { name: "Timbangan Terkalibrasi", bin: "amanah" },
+          { name: "Kaleng Penyok Bocor", bin: "cek" },
+          { name: "Label Harga Tertukar", bin: "cek" },
+          { name: "Buah Layu Busuk", bin: "cek" },
+          { name: "Nota Belum Tercatat", bin: "cek" }
+        ]
+      },
+      {
+        title: "Level 4: Jadwal Harian Santri",
+        mission: "Kelompokkan aktivitas produktif/ibadah ke Jadwal Utama dan distraksi berlebih ke Batas Waktu.",
+        targetCount: 11,
+        duration: 52,
+        bins: [
+          { id: "utama", label: "Jadwal Utama", sub: "Mengaji, belajar & bantu" },
+          { id: "batas", label: "Batas Santai", sub: "Kurangi / atur waktu" }
+        ],
+        items: [
+          { name: "Muroja'ah Pagi", bin: "utama" },
+          { name: "Menyiapkan Seragam", bin: "utama" },
+          { name: "Membantu Ibu di Dapur", bin: "utama" },
+          { name: "Menyiram Tanaman", bin: "utama" },
+          { name: "Menonton Layar Berjam-jam", bin: "batas" },
+          { name: "Menunda Waktu Tidur", bin: "batas" },
+          { name: "Main Terlalu Larut", bin: "batas" },
+          { name: "Mengabaikan PR", bin: "batas" }
+        ]
+      },
+      {
+        title: "Level 5: Harmoni Kampung Al Muttaqin",
+        mission: "Tantangan puncak! Jaga ketertiban & kebaikan kampung dengan ketelitian tinggi.",
+        targetCount: 12,
+        duration: 50,
+        bins: [
+          { id: "kebaikan", label: "Jejak Kebaikan", sub: "Tertib, amanah & peduli" },
+          { id: "perbaikan", label: "Perlu Perbaikan", sub: "Kelalaian & kekacauan" }
+        ],
+        items: [
+          { name: "Berbagi Bekal Teman", bin: "kebaikan" },
+          { name: "Mengembalikan Barang Temuan", bin: "kebaikan" },
+          { name: "Menyapa Guru & Tetangga", bin: "kebaikan" },
+          { name: "Merapikan Sandal Berjajar", bin: "kebaikan" },
+          { name: "Membuang Sampah Sembarangan", bin: "perbaikan" },
+          { name: "Menyerobot Antrean", bin: "perbaikan" },
+          { name: "Berbicara Kasar", bin: "perbaikan" },
+          { name: "Membiarkan Keran Menetes", bin: "perbaikan" }
+        ]
+      }
+    ];
+
+    const UPGRADES = [
+      { id: "taman", name: "Taman Hijau Masjid", desc: "Menambah suasana sejuk & +2 Biji bonus tiap menang", cost: 15 },
+      { id: "lentera", name: "Lentera Jalan Kampung", desc: "Menerangi jalur warga & +1 Amanah awal di Level 3+", cost: 25 },
+      { id: "rak_kitab", name: "Rak Literasi & Kitab", desc: "Memperkuat ketelitian & +1 Biji tiap jawaban tepat", cost: 40 }
+    ];
+
+    function defaultState() {
+      return {
+        levelIdx: 0,
+        biji: 10,
+        shields: 3,
+        combo: 0,
+        solved: 0,
+        timeLeft: 60,
+        roundsPlayed: 0,
+        soundOn: true,
+        upgrades: { taman: false, lentera: false, rak_kitab: false },
+        currentItem: null
+      };
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return defaultState();
+        const parsed = JSON.parse(raw);
+        return { ...defaultState(), ...parsed, upgrades: { ...defaultState().upgrades, ...(parsed.upgrades || {}) } };
+      } catch (e) {
+        return defaultState();
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          levelIdx: state.levelIdx,
+          biji: state.biji,
+          roundsPlayed: state.roundsPlayed,
+          soundOn: state.soundOn,
+          upgrades: state.upgrades
+        }));
+      } catch (e) {}
+    }
+
+    let state = loadState();
+    let timerInterval = null;
+    let audioCtx = null;
+
+    function playTone(type) {
+      if (!state.soundOn) return;
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        if (type === "ok") {
+          osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+          osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.08);
+          gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.18);
+        } else if (type === "err") {
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.16);
+        } else if (type === "win") {
+          osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+          osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1);
+          osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2);
+          gain.gain.setValueAtTime(0.09, audioCtx.currentTime);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.34);
+        }
+      } catch (e) {}
+    }
+
+    function toggleSound() {
+      state.soundOn = !state.soundOn;
+      document.getElementById("soundPill").textContent = "Suara: " + (state.soundOn ? "ON" : "OFF");
+      saveState();
+    }
+
+    function confirmResetSave() {
+      openModal(
+        "Reset Progres Permainan?",
+        "Biji Kebaikan, level tersimpan, dan pembangunan kampung akan dikembalikan ke kondisi awal.",
+        [
+          { label: "Batal", cls: "btn-ghost", action: () => closeModal() },
+          {
+            label: "Ya, Reset",
+            cls: "btn-primary",
+            action: () => {
+              localStorage.removeItem(STORAGE_KEY);
+              state = defaultState();
+              closeModal();
+              setupLevel(0, true);
+            }
+          }
+        ]
+      );
+    }
+
+    function pickNextItem() {
+      const lvl = LEVELS[state.levelIdx];
+      const base = lvl.items[Math.floor(Math.random() * lvl.items.length)];
+      const isBonus = Math.random() < 0.22;
+      state.currentItem = { ...base, isBonus };
+      const chip = document.getElementById("currentItemChip");
+      chip.textContent = (isBonus ? "★ " : "") + base.name;
+      chip.className = "item-chip" + (isBonus ? " bonus" : "");
+    }
+
+    function setupLevel(idx, resetTimer = true) {
+      clearInterval(timerInterval);
+      const safeIdx = Math.max(0, Math.min(idx, LEVELS.length - 1));
+      state.levelIdx = safeIdx;
+      const lvl = LEVELS[safeIdx];
+      state.solved = 0;
+      state.combo = 0;
+      state.shields = (safeIdx >= 2 && state.upgrades.lentera) ? 4 : 3;
+      if (resetTimer) state.timeLeft = lvl.duration;
+
+      document.getElementById("soundPill").textContent = "Suara: " + (state.soundOn ? "ON" : "OFF");
+      document.getElementById("levelBadge").textContent = "Level " + (safeIdx + 1) + " / " + LEVELS.length;
+      document.getElementById("missionText").textContent = lvl.mission;
+
+      const binsGrid = document.getElementById("binsGrid");
+      binsGrid.innerHTML = "";
+      lvl.bins.forEach(b => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "bin-btn";
+        btn.innerHTML = `<span class="bin-title">${b.label}</span><span class="bin-sub">${b.sub}</span>`;
+        btn.onclick = () => handleChoice(b.id);
+        btn.ondragover = (e) => { e.preventDefault(); btn.classList.add("drag-over"); };
+        btn.ondragleave = () => btn.classList.remove("drag-over");
+        btn.ondrop = (e) => {
+          e.preventDefault();
+          btn.classList.remove("drag-over");
+          handleChoice(b.id);
+        };
+        binsGrid.appendChild(btn);
+      });
+
+      pickNextItem();
+      renderHud();
+      renderUpgrades();
+      saveState();
+
+      timerInterval = setInterval(() => {
+        state.timeLeft -= 1;
+        renderHud();
+        if (state.timeLeft <= 0) {
+          clearInterval(timerInterval);
+          openModal(
+            "Waktu Ronde Habis",
+            "Tidak apa-apa, ketelitian butuh latihan bertahap. Yuk coba lagi ronde ini dengan tenang!",
+            [
+              { label: "Ulangi Ronde", cls: "btn-primary", action: () => { closeModal(); setupLevel(state.levelIdx, true); } }
+            ]
+          );
+        }
+      }, 1000);
+    }
+
+    function handleChoice(binId) {
+      if (!state.currentItem) return;
+      const lvl = LEVELS[state.levelIdx];
+      const banner = document.getElementById("feedbackBanner");
+
+      if (binId === state.currentItem.bin) {
+        state.combo += 1;
+        state.solved += 1;
+        let gainBiji = state.currentItem.isBonus ? 4 : 2;
+        if (state.combo >= 3) gainBiji += 1;
+        if (state.upgrades.rak_kitab) gainBiji += 1;
+        state.biji += gainBiji;
+        saveState();
+        playTone("ok");
+        banner.className = "feedback-banner ok";
+        banner.textContent = `Tepat! "${state.currentItem.name}" tertata rapi (+${gainBiji} Biji Kebaikan).`;
+
+        if (state.solved >= lvl.targetCount) {
+          clearInterval(timerInterval);
+          state.roundsPlayed += 1;
+          let bonusWin = 5 + (state.upgrades.taman ? 2 : 0);
+          state.biji += bonusWin;
+          saveState();
+          playTone("win");
+
+          if (state.roundsPlayed % 3 === 0) {
+            openModal(
+              "Jeda Sehat Bermain",
+              `Hebat! Kamu sudah menyelesaikan ${state.roundsPlayed} ronde dan mendapat bonus +${bonusWin} Biji Kebaikan. Istirahatkan mata sejenak, minum air putih, lalu lanjutkan bila siap.`,
+              [
+                {
+                  label: state.levelIdx < LEVELS.length - 1 ? "Lanjut Level Berikutnya" : "Main Lagi dari Level 1",
+                  cls: "btn-primary",
+                  action: () => {
+                    closeModal();
+                    const next = state.levelIdx < LEVELS.length - 1 ? state.levelIdx + 1 : 0;
+                    setupLevel(next, true);
+                  }
+                }
+              ]
+            );
+            return;
+          }
+
+          if (state.levelIdx < LEVELS.length - 1) {
+            openModal(
+              lvl.title + " Tuntas!",
+              `Alhamdulillah, target tercapai dan kamu memperoleh tambahan +${bonusWin} Biji Kebaikan.`,
+              [
+                {
+                  label: "Lanjut ke Level " + (state.levelIdx + 2),
+                  cls: "btn-primary",
+                  action: () => { closeModal(); setupLevel(state.levelIdx + 1, true); }
+                }
+              ]
+            );
+          } else {
+            openModal(
+              "Harmoni Kampung Tercapai!",
+              `Masya Allah, seluruh 5 level Jejak Kebaikan Kampung telah selesai dengan total ${state.biji} Biji Kebaikan.`,
+              [
+                {
+                  label: "Mulai Ulang dari Level 1",
+                  cls: "btn-gold",
+                  action: () => { closeModal(); setupLevel(0, true); }
+                }
+              ]
+            );
+          }
+          return;
+        }
+        pickNextItem();
+      } else {
+        state.combo = 0;
+        state.shields -= 1;
+        playTone("err");
+        banner.className = "feedback-banner err";
+        banner.textContent = `Kurang tepat untuk "${state.currentItem.name}". Amanah berkurang 1 — perhatikan fungsinya ya.`;
+
+        if (state.shields <= 0) {
+          clearInterval(timerInterval);
+          openModal(
+            "Amanah Perlu Diperbaiki",
+            "Beberapa penempatan masih keliru. Tarik napas dulu, amati kategori wadahnya, lalu ulangi ronde ini.",
+            [
+              { label: "Coba Lagi", cls: "btn-primary", action: () => { closeModal(); setupLevel(state.levelIdx, true); } }
+            ]
+          );
+          return;
+        }
+        pickNextItem();
+      }
+      renderHud();
+    }
+
+    function buyUpgrade(id) {
+      const upg = UPGRADES.find(u => u.id === id);
+      if (!upg || state.upgrades[id] || state.biji < upg.cost) return;
+      state.biji -= upg.cost;
+      state.upgrades[id] = true;
+      saveState();
+      playTone("win");
+      renderHud();
+      renderUpgrades();
+    }
+
+    function renderHud() {
+      const lvl = LEVELS[state.levelIdx];
+      const maxShields = (state.levelIdx >= 2 && state.upgrades.lentera) ? 4 : 3;
+      document.getElementById("bijiPill").textContent = "Biji: " + state.biji;
+      document.getElementById("shieldHud").textContent = `Amanah: ${state.shields}/${maxShields}`;
+      document.getElementById("comboHud").textContent = `Kombo: ${state.combo}x`;
+      document.getElementById("progressHud").textContent = `Target: ${state.solved}/${lvl.targetCount}`;
+      const timerBox = document.getElementById("timerBox");
+      timerBox.textContent = `Waktu: ${state.timeLeft}s`;
+      timerBox.className = "timer-box" + (state.timeLeft <= 10 ? " warn" : "");
+    }
+
+    function renderUpgrades() {
+      const list = document.getElementById("upgradesList");
+      list.innerHTML = "";
+      UPGRADES.forEach(upg => {
+        const owned = state.upgrades[upg.id];
+        const row = document.createElement("div");
+        row.className = "upgrade-row";
+        row.innerHTML = `
+          <div>
+            <div class="upgrade-name">${upg.name}</div>
+            <div class="upgrade-desc">${upg.desc}</div>
+          </div>
+        `;
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "btn " + (owned ? "btn-ghost" : "btn-gold");
+        btn.textContent = owned ? "Terpasang" : `${upg.cost} Biji`;
+        btn.disabled = owned || state.biji < upg.cost;
+        btn.onclick = () => buyUpgrade(upg.id);
+        row.appendChild(btn);
+        list.appendChild(row);
+      });
+    }
+
+    function openModal(title, body, actions) {
+      document.getElementById("modalTitle").textContent = title;
+      document.getElementById("modalBody").textContent = body;
+      const box = document.getElementById("modalActions");
+      box.innerHTML = "";
+      actions.forEach(act => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "btn " + act.cls;
+        b.textContent = act.label;
+        b.onclick = act.action;
+        box.appendChild(b);
+      });
+      document.getElementById("modalBackdrop").classList.add("open");
+    }
+
+    function closeModal() {
+      document.getElementById("modalBackdrop").classList.remove("open");
+    }
+
+    setupLevel(state.levelIdx || 0, true);
+  </script>
+</body>
+</html>

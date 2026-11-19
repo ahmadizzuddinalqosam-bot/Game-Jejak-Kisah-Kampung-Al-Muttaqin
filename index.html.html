@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Jejak Kebaikan Kampung — Kampung Al Muttaqin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --islamic-green: #185B43;
+      --islamic-green-dark: #104130;
+      --warm-cream: #F3E9D7;
+      --warm-ivory: #FBF7F0;
+      --gold-sand: #D4A85A;
+      --sky-blue: #6F8FBC;
+      --dusty-pink: #E79BB3;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: linear-gradient(135deg, #e6dcc8 0%, #d4e2d9 100%);
+      color: #232323;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, .font-display {
+      font-family: 'Poppins', sans-serif;
+    }
+
+    /* Game Container Frame */
+    #app-shell {
+      width: 100%;
+      max-width: 480px;
+      min-height: 100vh;
+      background-color: var(--warm-ivory);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 50px rgba(24, 91, 67, 0.22);
+      overflow: hidden;
+    }
+
+    @media (min-width: 520px) {
+      #app-shell {
+        min-height: 820px;
+        max-height: 92vh;
+        border-radius: 32px;
+        border: 4px solid var(--islamic-green);
+      }
+    }
+
+    /* Custom Animations */
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-6px); }
+    }
+
+    @keyframes pulseRing {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(212, 168, 90, 0.7); }
+      70% { transform: scale(1.03); box-shadow: 0 0 0 12px rgba(212, 168, 90, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(212, 168, 90, 0); }
+    }
+
+    @keyframes shakeError {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-8px) rotate(-2deg); }
+      40% { transform: translateX(8px) rotate(2deg); }
+      60% { transform: translateX(-6px); }
+      80% { transform: translateX(6px); }
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.6); opacity: 0; }
+      80% { transform: scale(1.06); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes scoreFloat {
+      0% { transform: translateY(0) scale(0.9); opacity: 1; }
+      100% { transform: translateY(-48px) scale(1.15); opacity: 0; }
+    }
+
+    @keyframes fingerTap {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      40% { transform: translate(0, -10px) scale(0.9); }
+      60% { transform: translate(0, 2px) scale(1.05); }
+    }
+
+    .anim-float { animation: floatSlow 3.2s ease-in-out infinite; }
+    .anim-pulse-gold { animation: pulseRing 2s infinite; }
+    .anim-shake { animation: shakeError 0.42s ease-in-out; }
+    .anim-pop { animation: popIn 0.32s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+    .anim-finger { animation: fingerTap 1.3s ease-in-out infinite; }
+
+    .score-popup {
+      position: absolute;
+      pointer-events: none;
+      font-weight: 900;
+      font-size: 1.25rem;
+      z-index: 50;
+      animation: scoreFloat 0.95s ease-out forwards;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    /* Tactile 3D-like Buttons */
+    .btn-game {
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+      box-shadow: 0 5px 0 rgba(16, 65, 48, 0.35);
+    }
+    .btn-game:active {
+      transform: translateY(4px);
+      box-shadow: 0 1px 0 rgba(16, 65, 48, 0.35);
+    }
+
+    .btn-gold {
+      background: linear-gradient(180deg, #E2B86B 0%, #D4A85A 100%);
+      color: #1A3A2D;
+      box-shadow: 0 5px 0 #9E7835;
+    }
+    .btn-gold:active {
+      transform: translateY(4px);
+      box-shadow: 0 1px 0 #9E7835;
+    }
+
+    .btn-green {
+      background: linear-gradient(180deg, #1E7053 0%, #185B43 100%);
+      color: #FFFFFF;
+      box-shadow: 0 5px 0 #0E3A2A;
+    }
+    .btn-green:active {
+      transform: translateY(4px);
+      box-shadow: 0 1px 0 #0E3A2A;
+    }
+
+    /* Item Card & Bins */
+    .item-card {
+      touch-action: none;
+      cursor: grab;
+      transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.18s ease, border-color 0.18s ease;
+    }
+    .item-card:active {
+      cursor: grabbing;
+    }
+    .item-card.selected {
+      transform: scale(1.06) translateY(-4px);
+      border-color: var(--gold-sand);
+      box-shadow: 0 12px 24px rgba(212, 168, 90, 0.45), 0 0 0 4px rgba(212, 168, 90, 0.35);
+    }
+
+    .bin-target {
+      transition: transform 0.16s ease, background-color 0.16s ease, border-color 0.16s ease;
+    }
+    .bin-target.drag-over, .bin-target:hover {
+      transform: translateY(-4px) scale(1.03);
+    }
+
+    /* Golden Bonus Item Shimmer */
+    .golden-card {
+      background: linear-gradient(135deg, #FFF8E6 0%, #FBE4A8 50%, #FFF8E6 100%);
+      border: 3px solid #D4A85A !important;
+      box-shadow: 0 8px 20px rgba(212, 168, 90, 0.45);
+    }
+  </style>
+</head>
+<body>
+
+<div id="app-shell">
+  <!-- TOP GLOBAL HEADER (Always Visible) -->
+  <header class="px-4 py-3 flex items-center justify-between bg-[#185B43] text-white border-b-4 border-[#D4A85A] z-20 shrink-0">
+    <div class="flex items-center gap-2.5">
+      <div class="w-9 h-9 rounded-xl bg-[#F3E9D7] flex items-center justify-center shadow-inner">
+        <!-- Mini Masjid Dome Icon -->
+        <svg class="w-6 h-6 text-[#185B43]" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2L13.2 4.5C15.8 5.3 18 7.6 18 10.5V12H6V10.5C6 7.6 8.2 5.3 10.8 4.5L12 2ZM4 13H20V21H15V16.5C15 15.1 13.9 14 12.5 14H11.5C10.1 14 9 15.1 9 16.5V21H4V13Z"/>
+        </svg>
+      </div>
+      <div>
+        <div class="text-[11px] uppercase tracking-wider text-[#D4A85A] font-extrabold leading-none">Kampung Al Muttaqin</div>
+        <div class="font-display font-bold text-sm leading-tight">Jejak Kebaikan</div>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <!-- Biji Kebaikan Counter -->
+      <div class="flex items-center gap-1.5 bg-[#104130] px-3 py-1.5 rounded-full border border-[#D4A85A]/60">
+        <svg class="w-4 h-4 text-[#D4A85A]" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2C7.5 6.5 5 10.5 5 14.5C5 18.6 8.1 22 12 22C15.9 22 19 18.6 19 14.5C19 10.5 16.5 6.5 12 2ZM12 19C9.8 19 8 17.1 8 14.8C8 12.6 9.6 10.1 12 7.2C14.4 10.1 16 12.6 16 14.8C16 17.1 14.2 19 12 19Z"/>
+        </svg>
+        <span id="global-seeds" class="font-extrabold text-xs text-[#F3E9D7]">0</span>
+      </div>
+
+      <!-- Sound Toggle Button -->
+      <button id="btn-sound" onclick="toggleMute()" aria-label="Suara" class="w-9 h-9 rounded-full bg-[#104130] hover:bg-[#227658] flex items-center justify-center border border-white/20 transition">
+        <svg id="icon-sound-on" class="w-5 h-5 text-[#F3E9D7]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+        </svg>
+        <svg id="icon-sound-off" class="w-5 h-5 text-[#E79BB3] hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path d="M11 5L6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ==================== SCREEN 1: KAMPUNG HUB (HOME) ==================== -->
+  <main id="screen-hub" class="flex-1 flex flex-col justify-between p-4 overflow-y-auto">
+    <!-- Village Visual Scene Card -->
+    <div class="relative rounded-3xl overflow-hidden border-2 border-[#185B43]/20 bg-gradient-to-b from-[#6F8FBC] via-[#9AB6DC] to-[#F3E9D7] p-4 shadow-md">
+      <!-- Decorative Clouds -->
+      <div class="flex justify-between items-center opacity-80 mb-1">
+        <div class="w-14 h-4 bg-white/80 rounded-full"></div>
+        <div class="w-10 h-3 bg-white/70 rounded-full"></div>
+      </div>
+
+      <!-- Illustrated Village Scene (SVG) -->
+      <div class="relative h-44 flex items-end justify-center">
+        <svg viewBox="0 0 360 150" class="w-full h-full overflow-visible">
+          <!-- Distant Hills -->
+          <path d="M0 130 Q90 85 180 125 Q270 85 360 130 L360 150 L0 150 Z" fill="#89B399"/>
+          <!-- Ground -->
+          <rect x="0" y="125" width="360" height="25" rx="8" fill="#4C8B68"/>
+
+          <!-- Masjid Al Muttaqin Center -->
+          <g transform="translate(125, 22)">
+            <!-- Minaret -->
+            <rect x="92" y="15" width="12" height="88" rx="3" fill="#F3E9D7" stroke="#185B43" stroke-width="2"/>
+            <path d="M90 15 L98 2 L106 15 Z" fill="#D4A85A"/>
+            <!-- Main Dome -->
+            <path d="M22 45 C22 15, 88 15, 88 45 Z" fill="#185B43"/>
+            <circle cx="55" cy="14" r="3.5" fill="#D4A85A"/>
+            <rect x="53.8" y="6" width="2.4" height="8" fill="#D4A85A"/>
+            <!-- Building Body -->
+            <rect x="15" y="45" width="80" height="58" rx="6" fill="#FBF7F0" stroke="#185B43" stroke-width="2.5"/>
+            <!-- Arch Door -->
+            <path d="M43 103 V72 C43 62, 67 62, 67 72 V103 Z" fill="#185B43"/>
+            <path d="M47 103 V74 C47 67, 63 67, 63 74 V103 Z" fill="#D4A85A"/>
+            <!-- Windows -->
+            <rect x="23" y="62" width="12" height="18" rx="6" fill="#6F8FBC"/>
+            <rect x="75" y="62" width="12" height="18" rx="6" fill="#6F8FBC"/>
+          </g>
+
+          <!-- UPGRADE 1: Taman Masjid (Flowers & Trees) -->
+          <g id="deco-garden" class="transition-opacity duration-500 opacity-20">
+            <circle cx="48" cy="105" r="18" fill="#2E7D5B"/>
+            <circle cx="38" cy="112" r="13" fill="#3B966E"/>
+            <rect x="45" y="115" width="6" height="14" fill="#7C5233"/>
+            <!-- Flowers -->
+            <circle cx="82" cy="126" r="4" fill="#E79BB3"/>
+            <circle cx="94" cy="128" r="4" fill="#D4A85A"/>
+            <circle cx="106" cy="126" r="4" fill="#E79BB3"/>
+          </g>
+
+          <!-- UPGRADE 2: Lampu Lentera Kampung -->
+          <g id="deco-lantern" class="transition-opacity duration-500 opacity-20">
+            <rect x="258" y="82" width="4" height="46" fill="#185B43"/>
+            <path d="M250 82 L270 82 L266 70 L254 70 Z" fill="#D4A85A"/>
+            <circle cx="260" cy="77" r="7" fill="#FFF3B0" opacity="0.85"/>
+          </g>
+
+          <!-- UPGRADE 3: Rak Buku Majelis & Papan Ilmu -->
+          <g id="deco-library" class="transition-opacity duration-500 opacity-20">
+            <rect x="285" y="88" width="44" height="40" rx="5" fill="#8C5A32" stroke="#185B43" stroke-width="2"/>
+            <rect x="290" y="94" width="34" height="12" rx="2" fill="#F3E9D7"/>
+            <rect x="292" y="96" width="6" height="8" fill="#185B43"/>
+            <rect x="300" y="96" width="6" height="8" fill="#E79BB3"/>
+            <rect x="308" y="96" width="6" height="8" fill="#6F8FBC"/>
+            <rect x="290" y="110" width="34" height="12" rx="2" fill="#F3E9D7"/>
+            <rect x="294" y="112" width="12" height="8" fill="#D4A85A"/>
+          </g>
+
+          <!-- Cute Stylized Characters (Al Qosam & Kak Zahra) -->
+          <g transform="translate(88, 92)" class="anim-float">
+            <!-- Al Qosam -->
+            <circle cx="14" cy="12" r="9" fill="#F7C9A9"/>
+            <path d="M6 8 C6 2, 22 2, 22 8 Z" fill="#185B43"/>
+            <circle cx="11" cy="12" r="1.3" fill="#232323"/>
+            <circle cx="17" cy="12" r="1.3" fill="#232323"/>
+            <path d="M11 15 Q14 18 17 15" stroke="#232323" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+            <rect x="6" y="21" width="16" height="16" rx="5" fill="#185B43"/>
+          </g>
+
+          <g transform="translate(232, 90)" class="anim-float" style="animation-delay: 0.6s;">
+            <!-- Kak Zahra -->
+            <path d="M4 14 C4 3, 24 3, 24 14 L26 24 L2 24 Z" fill="#E79BB3"/>
+            <circle cx="14" cy="13" r="8" fill="#F7C9A9"/>
+            <circle cx="11" cy="13" r="1.3" fill="#232323"/>
+            <circle cx="17" cy="13" r="1.3" fill="#232323"/>
+            <path d="M11 16 Q14 18.5 17 16" stroke="#232323" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+            <rect x="6" y="22" width="16" height="17" rx="5" fill="#F3E9D7"/>
+          </g>
+        </svg>
+      </div>
+
+      <!-- Village Upgrade Bar (Tukar Biji Kebaikan) -->
+      <div class="mt-2 bg-[#FBF7F0]/95 backdrop-blur rounded-2xl p-2.5 border border-[#185B43]/15">
+        <div class="flex items-center justify-between mb-1.5">
+          <span class="text-xs font-extrabold text-[#185B43]">Hias Kampung Al Muttaqin</span>
+          <span class="text-[11px] font-bold text-[#6E5A38]">Gunakan Biji Kebaikan</span>
+        </div>
+        <div class="grid grid-cols-3 gap-2" id="upgrade-list">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Level Selection Section -->
+    <div class="my-3">
+      <div class="flex items-center justify-between mb-2 px-1">
+        <h2 class="font-display font-bold text-base text-[#185B43]">Pilih Misi Kebaikan</h2>
+        <span id="total-stars-badge" class="text-xs font-extrabold px-2.5 py-1 rounded-full bg-[#F3E9D7] text-[#185B43] border border-[#D4A85A]">⭐ 0 / 15</span>
+      </div>
+
+      <div id="level-grid" class="space-y-2.5">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- Footer Healthy Play Note -->
+    <div class="text-center text-[11px] text-[#5C6660] bg-[#F3E9D7]/70 rounded-2xl py-2 px-3 border border-[#D4A85A]/40">
+      💡 <strong>Tips Bermain Sehat:</strong> Ketuk benda lalu ketuk wadah tujuan, atau geser langsung dengan satu jari!
+    </div>
+  </main>
+
+  <!-- ==================== SCREEN 2: ACTIVE GAMEPLAY ==================== -->
+  <section id="screen-game" class="hidden flex-1 flex flex-col justify-between p-4 relative">
+    <!-- Top HUD: Back, Level Title, Timer, Shields -->
+    <div class="bg-[#F3E9D7] rounded-2xl p-3 border-2 border-[#185B43]/20 shadow-sm">
+      <div class="flex items-center justify-between mb-2">
+        <button onclick="confirmExitLevel()" class="px-2.5 py-1 rounded-xl bg-white text-[#185B43] font-extrabold text-xs border border-[#185B43]/20 hover:bg-[#185B43] hover:text-white transition">
+          ← Kampung
+        </button>
+
+        <div class="text-center">
+          <span id="hud-level-badge" class="text-[11px] font-extrabold uppercase tracking-wider text-[#185B43]">Level 1</span>
+          <div id="hud-level-title" class="font-display font-bold text-xs text-[#232323] leading-tight">Ruang Belajar</div>
+        </div>
+
+        <!-- Amanah Shields (3 Hearts) -->
+        <div id="hud-shields" class="flex items-center gap-1" aria-label="Perisai Amanah">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+      <!-- Progress & Timer Bar -->
+      <div class="flex items-center gap-2.5">
+        <div class="flex items-center gap-1 bg-[#185B43] text-white px-2.5 py-1 rounded-lg text-xs font-extrabold shrink-0">
+          <span>⏱</span>
+          <span id="hud-timer">60s</span>
+        </div>
+
+        <div class="flex-1 bg-white h-3.5 rounded-full overflow-hidden border border-[#185B43]/20 p-0.5">
+          <div id="hud-progress-bar" class="h-full bg-gradient-to-r from-[#185B43] to-[#D4A85A] rounded-full transition-all duration-300" style="width: 0%"></div>
+        </div>
+
+        <div class="text-xs font-black text-[#185B43] shrink-0">
+          <span id="hud-score">0</span> pts
+        </div>
+      </div>
+
+      <!-- Combo Streak Pill -->
+      <div class="mt-2 flex items-center justify-between text-xs">
+        <div id="hud-progress-text" class="font-bold text-[#555]">Tersisa: 8 benda</div>
+        <div id="hud-combo-badge" class="px-2.5 py-0.5 rounded-full bg-[#D4A85A] text-[#1A3A2D] font-black opacity-0 transition-opacity duration-200">
+          🔥 Combo x2!
+        </div>
+      </div>
+    </div>
+
+    <!-- Center Stage: Active Item Card + Educational Micro-Tip -->
+    <div id="play-arena" class="flex-1 flex flex-col items-center justify-center my-2 relative">
+      <!-- Micro-Tip Toast (Gentle educational feedback on mistake or bonus) -->
+      <div id="micro-tip-box" class="hidden w-full mb-3 p-3 rounded-2xl bg-[#FFF4F6] border-2 border-[#E79BB3] text-xs text-[#4A2530] shadow-md anim-pop">
+        <div class="font-extrabold text-[#9E3B5A] mb-0.5 flex items-center gap-1">
+          <span>💡 Pengingat Kebaikan:</span>
+        </div>
+        <p id="micro-tip-text" class="leading-snug font-semibold"></p>
+      </div>
+
+      <!-- Instruction Cue -->
+      <p id="tap-instruction" class="text-xs font-extrabold text-[#185B43] mb-2 bg-[#F3E9D7] px-3 py-1 rounded-full">
+        Ketuk benda ini, lalu ketuk wadah yang tepat!
+      </p>
+
+      <!-- Active Item Card -->
+      <div id="active-item-wrapper" class="relative flex items-center justify-center">
+        <div id="active-item-card" class="item-card w-44 h-44 sm:w-48 sm:h-48 rounded-3xl bg-white border-4 border-[#185B43] shadow-xl flex flex-col items-center justify-center p-4 text-center relative">
+          <div id="golden-badge" class="hidden absolute -top-3 px-3 py-0.5 rounded-full bg-[#D4A85A] text-[#1A3A2D] text-[10px] font-black uppercase tracking-wider shadow">
+            ✨ Benda Emas +2x
+          </div>
+          <div id="item-svg-container" class="w-20 h-20 mb-2 flex items-center justify-center">
+            <!-- Item SVG -->
+          </div>
+          <div id="item-name" class="font-display font-bold text-sm text-[#185B43] leading-tight">Kitab Fiqih</div>
+          <div id="item-sub" class="text-[11px] font-semibold text-[#666] mt-0.5">Buku pelajaran agama</div>
+        </div>
+
+        <!-- Finger Cue Tutorial (Level 1 Item 1) -->
+        <div id="finger-cue" class="hidden absolute -bottom-6 -right-4 pointer-events-none z-30 anim-finger">
+          <div class="bg-[#D4A85A] text-[#1A3A2D] text-[10px] font-black px-2 py-0.5 rounded-full shadow mb-0.5">Ketuk!</div>
+          <svg class="w-10 h-10 text-[#185B43] drop-shadow" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M9 11.24V7.5C9 6.12 10.12 5 11.5 5S14 6.12 14 7.5v3.74c1.21-.81 2-2.18 2-3.74C16 5.01 13.99 3 11.5 3S7 5.01 7 7.5c0 1.56.79 2.93 2 3.74zm9.84 4.63l-4.54-2.26c-.17-.07-.35-.11-.54-.11H13v-6c0-.83-.67-1.5-1.5-1.5S10 6.67 10 7.5v10.74l-3.43-.72c-.08-.01-.15-.03-.24-.03-.31 0-.59.13-.79.33l-.79.8 4.94 4.94c.27.27.65.44 1.06.44h6.79c.75 0 1.33-.55 1.44-1.28l.75-5.27c.01-.07.02-.14.02-.2 0-.62-.38-1.16-.91-1.38z"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Bins (3 Categories) -->
+    <div class="mt-2">
+      <div id="bins-container" class="grid grid-cols-3 gap-2.5">
+        <!-- 3 Bins Rendered by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== MODAL: LEVEL COMPLETE / SUMMARY ==================== -->
+  <div id="modal-result" class="hidden absolute inset-0 bg-[#104130]/80 backdrop-blur-sm z-40 flex items-center justify-center p-4">
+    <div class="bg-[#FBF7F0] w-full max-w-sm rounded-3xl border-4 border-[#D4A85A] p-5 text-center shadow-2xl anim-pop">
+      <div id="result-badge" class="inline-block px-3 py-1 rounded-full bg-[#185B43] text-[#F3E9D7] text-xs font-extrabold mb-2">
+        Misi Selesai!
+      </div>
+      <h3 id="result-title" class="font-display font-extrabold text-xl text-[#185B43]">Alhamdulillah, Hebat!</h3>
+      <p id="result-subtitle" class="text-xs font-semibold text-[#555] mt-1">Ruang belajar Al Qosam & Kak Zahra kini rapi.</p>
+
+      <!-- Stars Display -->
+      <div id="result-stars" class="flex justify-center gap-3 my-4 text-4xl">
+        <span>⭐</span><span>⭐</span><span>⭐</span>
+      </div>
+
+      <!-- Score & Biji Kebaikan Earned -->
+      <div class="bg-[#F3E9D7] rounded-2xl p-3.5 border border-[#D4A85A]/60 space-y-2 mb-4">
+        <div class="flex justify-between text-xs font-bold text-[#444]">
+          <span>Skor Ketelitian:</span>
+          <span id="result-score" class="font-black text-[#185B43]">0 pts</span>
+        </div>
+        <div class="flex justify-between text-xs font-bold text-[#444]">
+          <span>Biji Kebaikan Didapat:</span>
+          <span id="result-seeds" class="font-black text-[#9E7835]">+0 Biji</span>
+        </div>
+      </div>
+
+      <!-- Lesson Summary -->
+      <div class="bg-white rounded-2xl p-3 border border-[#185B43]/15 text-left mb-4">
+        <div class="text-[11px] font-extrabold text-[#185B43] uppercase mb-0.5">Hikmah Kebaikan:</div>
+        <p id="result-wisdom" class="text-xs text-[#333] leading-relaxed font-semibold"></p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2.5">
+        <button onclick="replayLevel()" class="btn-game py-3 rounded-2xl bg-[#F3E9D7] text-[#185B43] font-extrabold text-sm border-2 border-[#185B43]/20">
+          Ulangi
+        </button>
+        <button id="btn-next-level" onclick="nextLevelOrHub()" class="btn-game btn-green py-3 rounded-2xl font-extrabold text-sm">
+          Lanjut Misi →
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: HEALTHY PLAY REMINDER (Every 3 Rounds) ==================== -->
+  <div id="modal-healthy-play" class="hidden absolute inset-0 bg-[#104130]/85 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-[#FBF7F0] w-full max-w-sm rounded-3xl border-4 border-[#6F8FBC] p-5 text-center shadow-2xl anim-pop">
+      <div class="w-16 h-16 mx-auto mb-3 rounded-full bg-[#6F8FBC]/20 flex items-center justify-center text-3xl">
+        🌿
+      </div>
+      <div class="inline-block px-3 py-0.5 rounded-full bg-[#6F8FBC] text-white text-[11px] font-extrabold mb-1">
+        Pengingat Bermain Sehat
+      </div>
+      <h3 class="font-display font-extrabold text-lg text-[#185B43]">Waktunya Istirahat Sejenak!</h3>
+      <p class="text-xs font-semibold text-[#444] mt-2 leading-relaxed">
+        MasyaAllah, kamu sudah menyelesaikan 3 ronde kebaikan! Mata dan badan juga butuh haknya untuk beristirahat. Yuk regangkan tangan, minum air putih, atau lihat pemandangan hijau sejenak.
+      </p>
+      <button onclick="closeHealthyModal()" class="btn-game btn-green w-full mt-4 py-3 rounded-2xl font-extrabold text-sm">
+        Siap, Terima Kasih!
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: CONFIRM EXIT LEVEL ==================== -->
+  <div id="modal-exit" class="hidden absolute inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-[#FBF7F0] w-full max-w-xs rounded-3xl border-4 border-[#185B43] p-5 text-center shadow-xl anim-pop">
+      <h3 class="font-display font-bold text-base text-[#185B43]">Kembali ke Kampung?</h3>
+      <p class="text-xs text-[#555] font-semibold mt-1 mb-4">Progres ronde ini belum tersimpan jika keluar sekarang.</p>
+      <div class="grid grid-cols-2 gap-2">
+        <button onclick="closeExitModal()" class="py-2.5 rounded-xl bg-[#F3E9D7] text-[#185B43] font-extrabold text-xs">Lanjut Main</button>
+        <button onclick="exitToHub()" class="py-2.5 rounded-xl bg-[#E79BB3] text-[#4A1C2B] font-extrabold text-xs">Ke Kampung</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ==========================================================================
+     1. WEB AUDIO API SYNTHESIZER (Pleasant Chimes, Soft Thud, Fanfare)
+     ========================================================================== */
+  let audioCtx = null;
+  let isMuted = false;
+
+  function initAudio() {
+    if (!audioCtx) {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      audioCtx = new AudioContext();
+    }
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+  }
+
+  function toggleMute() {
+    isMuted = !isMuted;
+    document.getElementById('icon-sound-on').classList.toggle('hidden', isMuted);
+    document.getElementById('icon-sound-off').classList.toggle('hidden', !isMuted);
+    if (!isMuted) {
+      initAudio();
+      playTone(523.25, 'sine', 0.12, 0.15);
+    }
+  }
+
+  function playTone(freq, type, duration, volume = 0.2, delay = 0) {
+    if (isMuted) return;
+    initAudio();
+    const now = audioCtx.currentTime + delay;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, now);
+    gain.gain.setValueAtTime(volume, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start(now);
+    osc.stop(now + duration);
+  }
+
+  function playCorrectSound(combo = 1) {
+    const base = 523.25 * Math.min(1 + (combo - 1) * 0.06, 1.45);
+    playTone(base, 'triangle', 0.18, 0.22, 0);
+    playTone(base * 1.25, 'sine', 0.24, 0.2, 0.07);
+  }
+
+  function playWrongSound() {
+    playTone(190, 'sine', 0.22, 0.22, 0);
+    playTone(145, 'triangle', 0.28, 0.2, 0.08);
+  }
+
+  function playFanfareSound() {
+    const notes = [523.25, 659.25, 783.99, 1046.50];
+    notes.forEach((n, idx) => {
+      playTone(n, 'triangle', 0.28, 0.22, idx * 0.11);
+    });
+  }
+
+  /* ==========================================================================
+     2. SVG ICON LIBRARY (Crisp Custom Vector Illustrations)
+     ========================================================================== */
+  const ICONS = {
+    quran: `<svg viewBox="0 0 64 64" class="w-full h-full"><rect x="12" y="10" width="40" height="44" rx="5" fill="#185B43"/><rect x="16" y="14" width="32" height="36" rx="3" fill="#D4A85A"/><rect x="20" y="18" width="24" height="28" rx="2" fill="#185B43"/><polygon points="32,23 35,29 41,29 36,33 38,39 32,35 26,39 28,33 23,29 29,29" fill="#D4A85A"/></svg>`,
+    book: `<svg viewBox="0 0 64 64" class="w-full h-full"><rect x="14" y="12" width="36" height="40" rx="4" fill="#6F8FBC"/><rect x="14" y="12" width="8" height="40" rx="2" fill="#185B43"/><rect x="26" y="20" width="18" height="6" rx="2" fill="#F3E9D7"/><rect x="26" y="30" width="14" height="4" rx="2" fill="#F3E9D7"/></svg>`,
+    pencil: `<svg viewBox="0 0 64 64" class="w-full h-full"><g transform="rotate(35 32 32)"><rect x="27" y="10" width="10" height="36" rx="2" fill="#D4A85A"/><polygon points="27,46 37,46 32,56" fill="#F7C9A9"/><polygon points="30.5,53 33.5,53 32,56" fill="#232323"/><rect x="27" y="8" width="10" height="6" rx="2" fill="#E79BB3"/></g></svg>`,
+    ruler: `<svg viewBox="0 0 64 64" class="w-full h-full"><g transform="rotate(-25 32 32)"><rect x="10" y="24" width="44" height="16" rx="3" fill="#F3E9D7" stroke="#185B43" stroke-width="2.5"/><line x1="18" y1="24" x2="18" y2="31" stroke="#185B43" stroke-width="2"/><line x1="26" y1="24" x2="26" y2="33" stroke="#185B43" stroke-width="2"/><line x1="34" y1="24" x2="34" y2="31" stroke="#185B43" stroke-width="2"/><line x1="42" y1="24" x2="42" y2="33" stroke="#185B43" stroke-width="2"/></g></svg>`,
+    paperTrash: `<svg viewBox="0 0 64 64" class="w-full h-full"><path d="M20 22 L28 14 L42 18 L48 30 L42 46 L24 48 L16 36 Z" fill="#E5DFD3" stroke="#7A756D" stroke-width="2.5"/><path d="M24 24 L36 32 M38 22 L28 38" stroke="#7A756D" stroke-width="2" stroke-linecap="round"/></svg>`,
+    bananaPeel: `<svg viewBox="0 0 64 64" class="w-full h-full"><path d="M32 14 C36 26, 48 36, 52 44 C42 44, 36 36, 32 28 C28 38, 20 46, 12 46 C16 36, 26 26, 32 14 Z" fill="#E6B84C" stroke="#8A661A" stroke-width="2"/><rect x="29" y="10" width="6" height="6" rx="2" fill="#6E4E1B"/></svg>`,
+    waterDrop: `<svg viewBox="0 0 64 64" class="w-full h-full"><path d="M32 10 C20 26, 15 34, 15 43 C15 52.4, 22.6 58, 32 58 C41.4 58, 49 52.4, 49 43 C49 34, 44 26, 32 10 Z" fill="#6F8FBC"/><path d="M24 42 C24 47, 27 50, 31 51" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" fill="none"/></svg>`,
+    peci: `<svg viewBox="0 0 64 64" class="w-full h-full"><path d="M12 40 C12 22, 52 22, 52 40 L50 48 C38 51, 26 51, 14 48 Z" fill="#185B43"/><path d="M14 44 C26 47, 38 47, 50 44" stroke="#D4A85A" stroke-width="3" fill="none"/></svg>`,
+    mukena: `<svg viewBox="0 0 64 64" class="w-full h-full"><path d="M32 12 C20 12, 12 24, 10 50 L54 50 C52 24, 44 12, 32 12 Z" fill="#F3E9D7" stroke="#E79BB3" stroke-width="3"/><circle cx="32" cy="25" r="8" fill="#F7C9A9"/></svg>`,
+    mud: `<svg viewBox="0 0 64 64" class="w-full h-full"><ellipse cx="32" cy="40" rx="22" ry="11" fill="#7D5A3C"/><circle cx="24" cy="34" r="7" fill="#63452C"/><circle cx="38" cy="35" r="6" fill="#63452C"/><circle cx="32" cy="24" r="3" fill="#7D5A3C"/></svg>`,
+    wallet: `<svg viewBox="0 0 64 64" class="w-full h-full"><rect x="12" y="18" width="40" height="28" rx="6" fill="#8C5A32"/><rect x="38" y="27" width="16" height="10" rx="3" fill="#D4A85A"/><circle cx="43" cy="32" r="2.5" fill="#185B43"/></svg>`,
+    basket: `<svg viewBox="0 0 64 64" class="w-full h-full"><path d="M14 28 L50 28 L45 50 L19 50 Z" fill="#D4A85A" stroke="#185B43" stroke-width="2.5"/><path d="M22 28 C22 14, 42 14, 42 28" stroke="#185B43" stroke-width="3" fill="none"/></svg>`,
+    goldRing: `<svg viewBox="0 0 64 64" class="w-full h-full"><circle cx="32" cy="36" r="14" stroke="#D4A85A" stroke-width="6" fill="none"/><polygon points="32,12 38,20 32,24 26,20" fill="#6F8FBC"/></svg>`,
+    mosqueTime: `<svg viewBox="0 0 64 64" class="w-full h-full"><circle cx="32" cy="32" r="22" fill="#185B43" stroke="#D4A85A" stroke-width="3"/><path d="M32 18 V32 L41 37" stroke="#F3E9D7" stroke-width="3.5" stroke-linecap="round" fill="none"/></svg>`,
+    helpParents: `<svg viewBox="0 0 64 64" class="w-full h-full"><path d="M32 52 C14 40, 10 26, 20 18 C26 14, 32 20, 32 20 C32 20, 38 14, 44 18 C54 26, 50 40, 32 52 Z" fill="#E79BB3"/></svg>`,
+    sleepRest: `<svg viewBox="0 0 64 64" class="w-full h-full"><path d="M38 14 C26 16, 18 26, 20 38 C22 48, 32 54, 44 50 C34 48, 28 40, 30 30 C31 22, 34 17, 38 14 Z" fill="#6F8FBC"/><circle cx="44" cy="22" r="2.5" fill="#D4A85A"/><circle cx="48" cy="32" r="2" fill="#D4A85A"/></svg>`,
+    starMedal: `<svg viewBox="0 0 64 64" class="w-full h-full"><polygon points="32,8 39,23 56,25 43,37 47,53 32,45 17,53 21,37 8,25 25,23" fill="#D4A85A" stroke="#185B43" stroke-width="2.5"/></svg>`
+  };
+
+  /* ==========================================================================
+     3. GAME DATA: 5 PROGRESSIVE LEVELS & UPGRADES
+     ========================================================================== */
+  const LEVELS = [
+    {
+      id: 1,
+      title: "Ruang Belajar Rapi",
+      location: "Rumah Al Qosam & Kak Zahra",
+      timeLimit: 60,
+      wisdom: "Menjaga kitab dan alat tulis di tempatnya adalah adab penuntut ilmu agar ilmu mudah diingat dan berkah.",
+      bins: [
+        { id: "kitab", label: "Rak Kitab", color: "bg-[#185B43] text-white border-[#D4A85A]", icon: "📚" },
+        { id: "tulis", label: "Kotak Tulis", color: "bg-[#6F8FBC] text-white border-[#185B43]", icon: "✏️" },
+        { id: "sampah", label: "Tempat Sampah", color: "bg-[#E79BB3] text-[#3B1723] border-[#185B43]", icon: "🗑️" }
+      ],
+      items: [
+        { name: "Mushaf Al-Qur'an", sub: "Kitab suci mulia", bin: "kitab", icon: "quran", tip: "Mushaf Al-Qur'an wajib diletakkan di tempat tinggi dan terhormat seperti Rak Kitab." },
+        { name: "Pensil Kayu", sub: "Alat menulis catatan", bin: "tulis", icon: "pencil", tip: "Simpan pensil di kotak alat tulis agar tidak patah atau hilang." },
+        { name: "Kertas Remasan", sub: "Coretan tak terpakai", bin: "sampah", icon: "paperTrash", tip: "Kertas bekas yang tidak dipakai dibuang ke tempat sampah agar meja bersih." },
+        { name: "Buku Fiqih Ibadah", sub: "Buku pelajaran madrasah", bin: "kitab", icon: "book", tip: "Buku pelajaran disusun rapi di rak kitab agar mudah dicari saat belajar." },
+        { name: "Penggaris Plastik", sub: "Alat bantu garis", bin: "tulis", icon: "ruler", tip: "Alat tulis dikelompokkan dalam satu wadah agar meja belajar lapang." },
+        { name: "Kulit Pisang", sub: "Sisa camilan", bin: "sampah", icon: "bananaPeel", tip: "Sisa makanan harus segera dibuang ke tempat sampah agar tidak mengundang semut." },
+        { name: "Kitab Doa Harian", sub: "Buku kumpulan doa", bin: "kitab", icon: "quran", tip: "Buku doa termasuk kitab ilmu yang dimuliakan di rak atas." },
+        { name: "Pensil Warna", sub: "Alat menggambar", bin: "tulis", icon: "pencil", tip: "Rapikan kembali alat gambar setelah selesai digunakan ya!" }
+      ]
+    },
+    {
+      id: 2,
+      title: "Persiapan Masjid",
+      location: "Masjid Al Muttaqin",
+      timeLimit: 60,
+      wisdom: "Bersuci dengan air mutlak dan memakai pakaian sholat yang bersih membuat ibadah semakin khusyuk.",
+      bins: [
+        { id: "wudhu", label: "Air Bersuci", color: "bg-[#6F8FBC] text-white border-[#185B43]", icon: "💧" },
+        { id: "sholat", label: "Alat Sholat", color: "bg-[#185B43] text-white border-[#D4A85A]", icon: "🕌" },
+        { id: "hindari", label: "Harus Dihindari", color: "bg-[#E79BB3] text-[#3B1723] border-[#185B43]", icon: "🚫" }
+      ],
+      items: [
+        { name: "Air Keran Jernih", sub: "Air mutlak suci menyucikan", bin: "wudhu", icon: "waterDrop", tip: "Air jernih yang tidak berubah sifatnya sah digunakan untuk berwudhu." },
+        { name: "Peci Songkok Bersih", sub: "Penutup kepala sholat", bin: "sholat", icon: "peci", tip: "Peci bersih dipakai untuk menjaga kerapian dan adab menghadap Allah." },
+        { name: "Lumpur Kotor", sub: "Mengotori pakaian", bin: "hindari", icon: "mud", tip: "Kotoran dan najis wajib dibersihkan sebelum memasuki area suci masjid." },
+        { name: "Mukena Putih Bersih", sub: "Perlengkapan sholat putri", bin: "sholat", icon: "mukena", tip: "Mukena yang bersih dan menutup aurat sempurna adalah syarat sah sholat." },
+        { name: "Air Hujan Mengalir", sub: "Air alami dari langit", bin: "wudhu", icon: "waterDrop", tip: "Air hujan termasuk air suci lagi menyucikan dalam bab Thaharah." },
+        { name: "Sampah di Halaman", sub: "Mengganggu jamaah", bin: "hindari", icon: "paperTrash", tip: "Kebersihan halaman masjid adalah sebagian dari iman, jangan mengotorinya." },
+        { name: "Air Sumur Jernih", sub: "Sumber air bersuci", bin: "wudhu", icon: "waterDrop", tip: "Air sumur yang bersih dan mengalir sah dipakai untuk berwudhu." },
+        { name: "Peci Hijau Santri", sub: "Perlengkapan ibadah", bin: "sholat", icon: "peci", tip: "Siapkan perlengkapan sholat sebelum adzan berkumandang." }
+      ]
+    },
+    {
+      id: 3,
+      title: "Amanah Pasar Kampung",
+      location: "Pasar & Warung Kampung",
+      timeLimit: 60,
+      wisdom: "Barang temuan (Luqathah) bukan milik kita; mengumumkannya adalah wujud kejujuran dan amanah.",
+      bins: [
+        { id: "milik", label: "Belanjaan Kita", color: "bg-[#185B43] text-white border-[#D4A85A]", icon: "🧺" },
+        { id: "amanah", label: "Barang Temuan", color: "bg-[#D4A85A] text-[#1A3A2D] border-[#185B43]", icon: "🤝" },
+        { id: "sampah", label: "Sampah Pasar", color: "bg-[#E79BB3] text-[#3B1723] border-[#185B43]", icon: "🗑️" }
+      ],
+      items: [
+        { name: "Dompet Terjatuh", sub: "Bukan milik kita", bin: "amanah", icon: "wallet", tip: "Dompet yang ditemukan di jalan harus diamankan dan diumumkan kepada pemiliknya." },
+        { name: "Keranjang Sayur Umi", sub: "Sudah dibayar halal", bin: "milik", icon: "basket", tip: "Barang yang dibeli dengan akad yang sah adalah hak milik keluarga." },
+        { name: "Cincin Emas Tercecer", sub: "Barang berharga orang lain", bin: "amanah", icon: "goldRing", tip: "Barang berharga yang ditemukan wajib dijaga amanahnya, tidak boleh diambil sendiri." },
+        { name: "Kulit Buah Busuk", sub: "Limbah lapak pasar", bin: "sampah", icon: "bananaPeel", tip: "Buang kulit buah pada tempatnya agar jalan pasar tidak licin." },
+        { name: "Buku Catatan Titipan", sub: "Milik sahabat santri", bin: "amanah", icon: "book", tip: "Titipan atau barang milik teman yang tertinggal harus segera dikembalikan." },
+        { name: "Kitab Belanjaan Abi", sub: "Dibeli di toko buku", bin: "milik", icon: "quran", tip: "Simpan belanjaan keluarga di keranjang sendiri dengan rapi." },
+        { name: "Kertas Bungkus Bekas", sub: "Sampah kering", bin: "sampah", icon: "paperTrash", tip: "Menjaga kebersihan pasar membantu kenyamanan penjual dan pembeli." },
+        { name: "Dompet Uang Kembalian", sub: "Kelebihan bayar penjual", bin: "amanah", icon: "wallet", tip: "Uang kembalian yang berlebih adalah hak penjual yang wajib dikembalikan." }
+      ]
+    },
+    {
+      id: 4,
+      title: "Jadwal Harian Santri",
+      location: "Kampung Al Muttaqin",
+      timeLimit: 60,
+      wisdom: "Mengatur waktu antara ibadah, belajar, berbakti kepada orang tua, dan istirahat melahirkan keberkahan.",
+      bins: [
+        { id: "ibadah", label: "Ibadah & Ngaji", color: "bg-[#185B43] text-white border-[#D4A85A]", icon: "🕌" },
+        { id: "bakti", label: "Belajar & Bakti", color: "bg-[#6F8FBC] text-white border-[#185B43]", icon: "📖" },
+        { id: "istirahat", label: "Istirahat Sehat", color: "bg-[#E79BB3] text-[#3B1723] border-[#185B43]", icon: "🌙" }
+      ],
+      items: [
+        { name: "Sholat Berjamaah", sub: "Saat adzan berkumandang", bin: "ibadah", icon: "mosqueTime", tip: "Sholat tepat waktu adalah amalan utama yang paling dicintai Allah." },
+        { name: "Membantu Umi & Abi", sub: "Berbakti di rumah", bin: "bakti", icon: "helpParents", tip: "Membantu pekerjaan orang tua adalah bentuk birrul walidain yang mulia." },
+        { name: "Tidur Malam Cukup", sub: "Menjaga kesehatan tubuh", bin: "istirahat", icon: "sleepRest", tip: "Tidur lebih awal membuat tubuh segar untuk bangun Subuh berjamaah." },
+        { name: "Mengaji Ba'da Maghrib", sub: "Membaca Al-Qur'an", bin: "ibadah", icon: "quran", tip: "Membiasakan tilawah setiap hari menerangi hati dan rumah." },
+        { name: "Mengerjakan PR Sekolah", sub: "Belajar tekun", bin: "bakti", icon: "pencil", tip: "Menyelesaikan tugas sekolah dengan jujur adalah tanggung jawab santri." },
+        { name: "Istirahat Mata & Badan", sub: "Jeda setelah belajar", bin: "istirahat", icon: "sleepRest", tip: "Tubuh dan mata memiliki hak untuk beristirahat agar tidak kelelahan." },
+        { name: "Mengulang Hafalan", sub: "Muraja'ah doa & surat", bin: "ibadah", icon: "book", tip: "Mengulang hafalan menjaga ayat dan doa tetap melekat kuat." },
+        { name: "Merapikan Meja Keluarga", sub: "Tolong-menolong", bin: "bakti", icon: "basket", tip: "Saling membantu di rumah menumbuhkan kasih sayang keluarga." }
+      ]
+    },
+    {
+      id: 5,
+      title: "Tantangan Akhir Kampung",
+      location: "Semua Lokasi Al Muttaqin",
+      timeLimit: 60,
+      wisdom: "Kebaikan kecil yang dilakukan dengan teliti, jujur, dan istiqamah akan menjadi cahaya di dunia dan akhirat.",
+      bins: [
+        { id: "ilmu", label: "Ilmu & Ibadah", color: "bg-[#185B43] text-white border-[#D4A85A]", icon: "🌟" },
+        { id: "amanah", label: "Amanah & Bakti", color: "bg-[#D4A85A] text-[#1A3A2D] border-[#185B43]", icon: "🤝" },
+        { id: "bersih", label: "Kebersihan", color: "bg-[#6F8FBC] text-white border-[#185B43]", icon: "✨" }
+      ],
+      items: [
+        { name: "Mushaf Al-Qur'an", sub: "Pedoman hidup Muslim", bin: "ilmu", icon: "quran", golden: true, tip: "Al-Qur'an adalah sumber petunjuk utama dalam setiap langkah kebaikan." },
+        { name: "Dompet Temuan", sub: "Wajib dikembalikan", bin: "amanah", icon: "wallet", tip: "Kejujuran menjaga amanah adalah ciri utama penduduk Kampung Al Muttaqin." },
+        { name: "Air Wudhu Bersih", sub: "Kesucian ibadah", bin: "bersih", icon: "waterDrop", tip: "Menjaga kesucian diri adalah kunci diterimanya sholat." },
+        { name: "Bintang Bakti Orang Tua", sub: "Akhlak mulia", bin: "amanah", icon: "helpParents", golden: true, tip: "Ridha Allah bergantung pada ridha kedua orang tua." },
+        { name: "Peci Sholat Rapi", sub: "Adab beribadah", bin: "ilmu", icon: "peci", tip: "Berpakaian rapi saat beribadah menunjukkan penghormatan kepada Allah." },
+        { name: "Sisa Sampah Kertas", sub: "Buang pada tempatnya", bin: "bersih", icon: "paperTrash", tip: "Lingkungan bersih membuat belajar dan beribadah terasa nyaman." },
+        { name: "Cincin Titipan Warga", sub: "Amanah berharga", bin: "amanah", icon: "goldRing", golden: true, tip: "Menjaga hak sesama warga memperkuat persaudaraan kampung." },
+        { name: "Kitab Fiqih Praktis", sub: "Panduan ibadah harian", bin: "ilmu", icon: "book", tip: "Ilmu yang diamalkan akan menjadi amal jariyah yang terus mengalir." },
+        { name: "Kulit Pisang", sub: "Jaga kebersihan jalan", bin: "bersih", icon: "bananaPeel", tip: "Menyingkirkan gangguan dari jalan adalah bagian dari sedekah." },
+        { name: "Bintang Istiqamah", sub: "Konsisten berbuat baik", bin: "ilmu", icon: "starMedal", golden: true, tip: "Amalan yang paling dicintai adalah yang dikerjakan secara konsisten meski sedikit." }
+      ]
+    }
+  ];
+
+  const UPGRADES = [
+    { id: "garden", name: "Taman Masjid", cost: 30, targetSvg: "deco-garden", icon: "🌳" },
+    { id: "lantern", name: "Lentera Jalan", cost: 50, targetSvg: "deco-lantern", icon: "🏮" },
+    { id: "library", name: "Rak Majelis", cost: 80, targetSvg: "deco-library", icon: "📚" }
+  ];
+
+  /* ==========================================================================
+     4. PERSISTENT STATE (LocalStorage with Safe Fallback)
+     ========================================================================== */
+  let state = {
+    seeds: 0,
+    stars: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+    upgrades: { garden: false, lantern: false, library: false },
+    roundsPlayedSession: 0
+  };
+
+  function loadState() {
+    try {
+      const saved = localStorage.getItem('jejak_kebaikan_kampung_v1');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        state = { ...state, ...parsed, roundsPlayedSession: 0 };
+      }
+    } catch (e) { /* Ignore storage restrictions */ }
+  }
+
+  function saveState() {
+    try {
+      localStorage.setItem('jejak_kebaikan_kampung_v1', JSON.stringify(state));
+    } catch (e) { /* Ignore storage restrictions */ }
+  }
+
+  /* ==========================================================================
+     5. HUB RENDERING & VILLAGE UPGRADES
+     ========================================================================== */
+  function renderHub() {
+    document.getElementById('global-seeds').textContent = state.seeds;
+
+    // Total Stars
+    const totalStars = Object.values(state.stars).reduce((a, b) => a + b, 0);
+    document.getElementById('total-stars-badge').textContent = `⭐ ${totalStars} / 15`;
+
+    // Render Village Decorations
+    UPGRADES.forEach(upg => {
+      const el = document.getElementById(upg.targetSvg);
+      if (el) {
+        el.classList.toggle('opacity-20', !state.upgrades[upg.id]);
+        el.classList.toggle('opacity-100', !!state.upgrades[upg.id]);
+      }
+    });
+
+    // Render Upgrade Buttons
+    const upgContainer = document.getElementById('upgrade-list');
+    upgContainer.innerHTML = UPGRADES.map(upg => {
+      const owned = state.upgrades[upg.id];
+      const canBuy = state.seeds >= upg.cost && !owned;
+      return `
+        <button onclick="buyUpgrade('${upg.id}')" ${owned ? 'disabled' : ''}
+          class="p-2 rounded-xl border text-center transition flex flex-col items-center justify-center ${
+            owned
+              ? 'bg-[#185B43] text-white border-[#185B43]'
+              : canBuy
+                ? 'bg-[#FFF8E6] border-[#D4A85A] text-[#185B43] anim-pulse-gold cursor-pointer'
+                : 'bg-white border-gray-200 text-gray-500 opacity-80'
+          }">
+          <span class="text-base leading-none mb-1">${upg.icon}</span>
+          <span class="text-[10px] font-extrabold leading-tight">${upg.name}</span>
+          <span class="text-[9px] font-black mt-0.5 px-1.5 py-0.2 rounded-full ${owned ? 'bg-[#D4A85A] text-[#1A3A2D]' : 'bg-[#F3E9D7] text-[#6E5A38]'}">
+            ${owned ? 'Terpasang ✓' : `${upg.cost} Biji`}
+          </span>
+        </button>
+      `;
+    }).join('');
+
+    // Render Level Cards
+    const levelGrid = document.getElementById('level-grid');
+    levelGrid.innerHTML = LEVELS.map(lvl => {
+      const earned = state.stars[lvl.id] || 0;
+      const starIcons = [1, 2, 3].map(s => s <= earned ? '⭐' : '☆').join('');
+      return `
+        <button onclick="startLevel(${lvl.id})"
+          class="btn-game w-full bg-white hover:bg-[#F3E9D7]/60 rounded-2xl p-3 border-2 border-[#185B43]/20 flex items-center justify-between text-left">
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-2xl bg-[#185B43] text-[#F3E9D7] font-display font-black text-base flex items-center justify-center border-2 border-[#D4A85A] shrink-0">
+              ${lvl.id}
+            </div>
+            <div>
+              <div class="text-[10px] font-extrabold uppercase tracking-wider text-[#6F8FBC]">${lvl.location}</div>
+              <div class="font-display font-bold text-sm text-[#185B43]">${lvl.title}</div>
+              <div class="text-xs tracking-widest mt-0.5 text-[#D4A85A]">${starIcons}</div>
+            </div>
+          </div>
+          <div class="px-3 py-1.5 rounded-xl bg-[#D4A85A] text-[#1A3A2D] font-black text-xs shrink-0">
+            Main ▶
+          </div>
+        </button>
+      `;
+    }).join('');
+  }
+
+  function buyUpgrade(id) {
+    const upg = UPGRADES.find(u => u.id === id);
+    if (!upg || state.upgrades[id]) return;
+    if (state.seeds < upg.cost) {
+      playWrongSound();
+      return;
+    }
+    state.seeds -= upg.cost;
+    state.upgrades[id] = true;
+    saveState();
+    playFanfareSound();
+    renderHub();
+  }
+
+  /* ==========================================================================
+     6. GAMEPLAY ENGINE (Tap-to-Place + Drag-and-Drop + Combo + Timer)
+     ========================================================================== */
+  let currentLevel = null;
+  let itemQueue = [];
+  let currentItem = null;
+  let itemSelected = true; // Auto-selected for effortless 1-tap bin placement!
+  let score = 0;
+  let combo = 0;
+  let shields = 3;
+  let timeLeft = 60;
+  let timerInterval = null;
+  let totalItemsCount = 0;
+  let solvedCount = 0;
+
+  function shuffleArray(arr) {
+    const copy = [...arr];
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+  }
+
+  function startLevel(levelId) {
+    initAudio();
+    currentLevel = LEVELS.find(l => l.id === levelId);
+    if (!currentLevel) return;
+
+    itemQueue = shuffleArray(currentLevel.items);
+    totalItemsCount = itemQueue.length;
+    solvedCount = 0;
+    score = 0;
+    combo = 0;
+    shields = 3;
+    timeLeft = currentLevel.timeLimit;
+
+    // Switch Screens
+    document.getElementById('screen-hub').classList.add('hidden');
+    document.getElementById('modal-result').classList.add('hidden');
+    document.getElementById('screen-game').classList.remove('hidden');
+    document.getElementById('micro-tip-box').classList.add('hidden');
+
+    // Setup HUD
+    document.getElementById('hud-level-badge').textContent = `Level ${currentLevel.id} • ${currentLevel.location}`;
+    document.getElementById('hud-level-title').textContent = currentLevel.title;
+    updateHUD();
+    renderBins();
+    loadNextItem();
+
+    // Start Timer
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      updateHUD();
+      if (timeLeft <= 0) {
+        finishLevel(false);
+      }
+    }, 1000);
+  }
+
+  function updateHUD() {
+    document.getElementById('hud-timer').textContent = `${timeLeft}s`;
+    document.getElementById('hud-score').textContent = score;
+    const pct = Math.round((solvedCount / totalItemsCount) * 100);
+    document.getElementById('hud-progress-bar').style.width = `${pct}%`;
+    document.getElementById('hud-progress-text').textContent = `Selesai: ${solvedCount} / ${totalItemsCount}`;
+
+    // Shields
+    const shieldsEl = document.getElementById('hud-shields');
+    shieldsEl.innerHTML = [1, 2, 3].map(i => `
+      <span class="text-base transition-transform ${i <= shields ? 'scale-100 opacity-100' : 'scale-75 opacity-25 grayscale'}">🛡️</span>
+    `).join('');
+
+    // Combo badge
+    const comboBadge = document.getElementById('hud-combo-badge');
+    if (combo >= 2) {
+      comboBadge.textContent = `🔥 Combo x${combo}!`;
+      comboBadge.classList.remove('opacity-0');
+    } else {
+      comboBadge.classList.add('opacity-0');
+    }
+  }
+
+  function renderBins() {
+    const container = document.getElementById('bins-container');
+    container.innerHTML = currentLevel.bins.map(bin => `
+      <button data-bin-id="${bin.id}" onclick="handleBinTap('${bin.id}')"
+        class="bin-target rounded-2xl p-3 border-b-4 shadow-md flex flex-col items-center justify-center text-center min-h-[104px] ${bin.color}">
+        <span class="text-2xl mb-1 pointer-events-none">${bin.icon}</span>
+        <span class="font-display font-bold text-xs leading-tight pointer-events-none">${bin.label}</span>
+      </button>
+    `).join('');
+  }
+
+  function loadNextItem() {
+    if (itemQueue.length === 0) {
+      finishLevel(true);
+      return;
+    }
+    currentItem = itemQueue.shift();
+    itemSelected = true;
+
+    const card = document.getElementById('active-item-card');
+    card.classList.remove('anim-pop', 'anim-shake', 'golden-card');
+    void card.offsetWidth; // trigger reflow
+    card.classList.add('anim-pop', 'selected');
+    if (currentItem.golden) {
+      card.classList.add('golden-card');
+    }
+
+    document.getElementById('golden-badge').classList.toggle('hidden', !currentItem.golden);
+    document.getElementById('item-svg-container').innerHTML = ICONS[currentItem.icon] || ICONS.book;
+    document.getElementById('item-name').textContent = currentItem.name;
+    document.getElementById('item-sub').textContent = currentItem.sub;
+
+    // Finger cue on Level 1 very first item
+    const showCue = currentLevel.id === 1 && solvedCount === 0;
+    document.getElementById('finger-cue').classList.toggle('hidden', !showCue);
+  }
+
+  function handleBinTap(binId) {
+    if (!currentItem) return;
+    document.getElementById('finger-cue').classList.add('hidden');
+
+    if (currentItem.bin === binId) {
+      // CORRECT SORT
+      combo++;
+      const basePts = currentItem.golden ? 200 : 100;
+      const bonus = (combo - 1) * 25;
+      const gained = basePts + bonus;
+      score += gained;
+      solvedCount++;
+
+      playCorrectSound(combo);
+      spawnFloatingScore(`+${gained}`, currentItem.golden ? '#D4A85A' : '#185B43');
+      document.getElementById('micro-tip-box').classList.add('hidden');
+
+      updateHUD();
+      loadNextItem();
+    } else {
+      // GENTLE MISTAKE HANDLING (Educational Micro-Tip)
+      combo = 0;
+      shields = Math.max(0, shields - 1);
+      playWrongSound();
+
+      const card = document.getElementById('active-item-card');
+      card.classList.remove('anim-shake');
+      void card.offsetWidth;
+      card.classList.add('anim-shake');
+
+      // Show gentle educational micro-tip
+      const tipBox = document.getElementById('micro-tip-box');
+      document.getElementById('micro-tip-text').textContent = currentItem.tip;
+      tipBox.classList.remove('hidden');
+
+      updateHUD();
+
+      if (shields === 0) {
+        setTimeout(() => finishLevel(false), 650);
+      }
+    }
+  }
+
+  function spawnFloatingScore(text, color) {
+    const arena = document.getElementById('play-arena');
+    const el = document.createElement('div');
+    el.className = 'score-popup';
+    el.style.color = color;
+    el.style.top = '38%';
+    el.textContent = text;
+    arena.appendChild(el);
+    setTimeout(() => el.remove(), 950);
+  }
+
+  /* ==========================================================================
+     7. TOUCH & MOUSE DRAG-AND-DROP SUPPORT (Seamless 1-Finger Drag)
+     ========================================================================== */
+  (function initDragAndDrop() {
+    const card = document.getElementById('active-item-card');
+    let isDragging = false;
+    let startX = 0, startY = 0;
+
+    function onStart(clientX, clientY) {
+      if (!currentItem) return;
+      isDragging = true;
+      startX = clientX;
+      startY = clientY;
+      card.style.transition = 'none';
+      card.style.zIndex = '40';
+    }
+
+    function onMove(clientX, clientY) {
+      if (!isDragging) return;
+      const dx = clientX - startX;
+      const dy = clientY - startY;
+      const rot = dx * 0.06;
+      card.style.transform = `translate(${dx}px, ${dy}px) rotate(${rot}deg) scale(1.06)`;
+
+      // Highlight bin underneath pointer
+      document.querySelectorAll('.bin-target').forEach(bin => {
+        const rect = bin.getBoundingClientRect();
+        const over = clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom;
+        bin.classList.toggle('drag-over', over);
+      });
+    }
+
+    function onEnd(clientX, clientY) {
+      if (!isDragging) return;
+      isDragging = false;
+      card.style.transition = 'transform 0.2s ease';
+      card.style.transform = '';
+      card.style.zIndex = '';
+
+      let droppedBinId = null;
+      document.querySelectorAll('.bin-target').forEach(bin => {
+        bin.classList.remove('drag-over');
+        const rect = bin.getBoundingClientRect();
+        if (clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom) {
+          droppedBinId = bin.getAttribute('data-bin-id');
+        }
+      });
+
+      if (droppedBinId) {
+        handleBinTap(droppedBinId);
+      }
+    }
+
+    // Touch Events
+    card.addEventListener('touchstart', e => {
+      const t = e.touches[0];
+      onStart(t.clientX, t.clientY);
+    }, { passive: true });
+
+    window.addEventListener('touchmove', e => {
+      if (!isDragging) return;
+      const t = e.touches[0];
+      onMove(t.clientX, t.clientY);
+    }, { passive: true });
+
+    window.addEventListener('touchend', e => {
+      if (!isDragging) return;
+      const t = e.changedTouches[0];
+      onEnd(t.clientX, t.clientY);
+    });
+
+    // Mouse Events
+    card.addEventListener('mousedown', e => {
+      onStart(e.clientX, e.clientY);
+    });
+
+    window.addEventListener('mousemove', e => {
+      if (!isDragging) return;
+      onMove(e.clientX, e.clientY);
+    });
+
+    window.addEventListener('mouseup', e => {
+      if (!isDragging) return;
+      onEnd(e.clientX, e.clientY);
+    });
+  })();
+
+  /* ==========================================================================
+     8. LEVEL END, STAR RATING, SEEDS & HEALTHY PLAY REMINDER
+     ========================================================================== */
+  function finishLevel(completedAll) {
+    clearInterval(timerInterval);
+    currentItem = null;
+
+    // Calculate Stars (1 to 3)
+    let starsEarned = 1;
+    if (completedAll && shields === 3 && timeLeft >= 15) {
+      starsEarned = 3;
+    } else if (completedAll && shields >= 2) {
+      starsEarned = 2;
+    } else if (!completedAll && solvedCount === 0) {
+      starsEarned = 0;
+    }
+
+    // Time bonus
+    if (completedAll) {
+      score += timeLeft * 10;
+    }
+
+    // Biji Kebaikan earned
+    const seedsEarned = Math.max(5, Math.round(score / 45));
+    state.seeds += seedsEarned;
+    if (starsEarned > (state.stars[currentLevel.id] || 0)) {
+      state.stars[currentLevel.id] = starsEarned;
+    }
+    state.roundsPlayedSession++;
+    saveState();
+
+    document.getElementById('global-seeds').textContent = state.seeds;
+
+    if (starsEarned >= 2) {
+      playFanfareSound();
+    } else {
+      playCorrectSound(1);
+    }
+
+    // Populate Result Modal
+    document.getElementById('result-badge').textContent = completedAll ? 'Misi Tuntas!' : 'Terus Belajar!';
+    document.getElementById('result-title').textContent =
+      starsEarned === 3 ? 'MasyaAllah, Sempurna!' :
+      starsEarned === 2 ? 'Alhamdulillah, Bagus!' :
+      'Ayo Coba Lagi Lebih Teliti!';
+    document.getElementById('result-subtitle').textContent = `${currentLevel.title} • ${currentLevel.location}`;
+
+    document.getElementById('result-stars').innerHTML = [1, 2, 3].map(i =>
+      `<span class="${i <= starsEarned ? 'scale-110' : 'opacity-25 grayscale'}">⭐</span>`
+    ).join('');
+
+    document.getElementById('result-score').textContent = `${score} pts`;
+    document.getElementById('result-seeds').textContent = `+${seedsEarned} Biji`;
+    document.getElementById('result-wisdom').textContent = currentLevel.wisdom;
+
+    const nextBtn = document.getElementById('btn-next-level');
+    nextBtn.textContent = currentLevel.id < LEVELS.length ? 'Level Berikutnya →' : 'Lihat Kampung 🏡';
+
+    document.getElementById('modal-result').classList.remove('hidden');
+
+    // Check Healthy Play Reminder every 3 rounds
+    if (state.roundsPlayedSession > 0 && state.roundsPlayedSession % 3 === 0) {
+      setTimeout(() => {
+        document.getElementById('modal-healthy-play').classList.remove('hidden');
+      }, 650);
+    }
+  }
+
+  function replayLevel() {
+    if (currentLevel) startLevel(currentLevel.id);
+  }
+
+  function nextLevelOrHub() {
+    if (currentLevel && currentLevel.id < LEVELS.length) {
+      startLevel(currentLevel.id + 1);
+    } else {
+      exitToHub();
+    }
+  }
+
+  function confirmExitLevel() {
+    document.getElementById('modal-exit').classList.remove('hidden');
+  }
+
+  function closeExitModal() {
+    document.getElementById('modal-exit').classList.add('hidden');
+  }
+
+  function exitToHub() {
+    clearInterval(timerInterval);
+    currentItem = null;
+    document.getElementById('modal-exit').classList.add('hidden');
+    document.getElementById('modal-result').classList.add('hidden');
+    document.getElementById('screen-game').classList.add('hidden');
+    document.getElementById('screen-hub').classList.remove('hidden');
+    renderHub();
+  }
+
+  function closeHealthyModal() {
+    document.getElementById('modal-healthy-play').classList.add('hidden');
+  }
+
+  // Initialize App on Load
+  window.onload = function () {
+    loadState();
+    renderHub();
+  };
+</script>
+</body>
+</html>
